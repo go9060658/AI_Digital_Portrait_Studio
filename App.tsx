@@ -107,18 +107,20 @@ The final output will be a set of three distinct, full-frame images from this sc
   }, []);
 
   const handleGenerate = useCallback(async () => {
-    if (!user) {
-      setError('請先登入後再產生圖片。');
-      return;
-    }
-    if (!GEMINI_API_KEY) {
-      setError('尚未設定 Gemini API Key，請於環境變數新增 VITE_API_KEY。');
-      return;
-    }
     setIsLoading(true);
     setError(null);
     setImages([]);
     
+    if (!user) {
+      setError('請先登入後再產生圖片。');
+      setIsLoading(false);
+      return;
+    }
+    if (!GEMINI_API_KEY) {
+      setError('尚未設定 Gemini API Key，請於環境變數新增 VITE_API_KEY。');
+      setIsLoading(false);
+      return;
+    }
     const basePrompt = `A professional fashion photoshoot featuring '${formData.productName}'.
 A ${formData.modelGender === '女性模特兒' ? 'female' : 'male'} model with a ${formData.clothingStyle} aesthetic is wearing clothing suitable for the ${formData.clothingSeason}.
 The setting is ${formData.background}.
