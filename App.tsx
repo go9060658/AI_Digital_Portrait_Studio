@@ -544,22 +544,25 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
       return response.blob();
     };
 
-    const tryWebShare = async () => {
+    const tryWebShare = async (): Promise<'shared' | 'cancelled' | 'unsupported'> => {
       try {
         const blob = await getBlobFromSrc(primaryImage.src);
         const file = new File([blob], `flypig-ai-${Date.now()}.png`, { type: blob.type || 'image/png' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({ files: [file], text: message });
-          return true;
+          return 'shared';
         }
         if (navigator.share) {
           await navigator.share({ text: message });
-          return true;
+          return 'shared';
         }
       } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') {
+          return 'cancelled';
+        }
         console.error('Web Share 失敗：', err);
       }
-      return false;
+      return 'unsupported';
     };
 
     const completeShareReward = async () => {
@@ -572,8 +575,15 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
     };
 
     if (platform === 'instagram') {
-      const shared = await tryWebShare();
-      if (!shared) {
+      const shareResult = await tryWebShare();
+      if (shareResult === 'shared') {
+        await completeShareReward();
+        return;
+      }
+      if (shareResult === 'cancelled') {
+        return;
+      }
+      if (shareResult === 'unsupported') {
         window.alert('Instagram 分享需要支援 Web Share 的裝置或瀏覽器。分享文字已複製，請自行貼上。');
         try {
           await navigator.clipboard.writeText(message);
@@ -587,8 +597,15 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
     }
 
     // Facebook
-    const webShared = await tryWebShare();
-    if (!webShared) {
+    const fbShareResult = await tryWebShare();
+    if (fbShareResult === 'shared') {
+      await completeShareReward();
+      return;
+    }
+    if (fbShareResult === 'cancelled') {
+      return;
+    }
+    if (fbShareResult === 'unsupported') {
       const url = new URL('https://www.facebook.com/sharer/sharer.php');
       url.searchParams.set('u', primaryImage.src);
       url.searchParams.set('quote', message);
