@@ -110,7 +110,8 @@ The final output will be a set of three distinct, full-frame images from this sc
 
   const uploadHistoryImages = useCallback(async (uid: string, images: ImageResult[]): Promise<ImageResult[]> => {
     if (!storage) {
-      throw new Error("Firebase Storage 尚未初始化，請確認環境變數設定。");
+      console.warn("Firebase Storage 尚未初始化，歷史紀錄將以 base64 儲存。");
+      return images;
     }
 
     const timestamp = Date.now();
