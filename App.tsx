@@ -109,6 +109,10 @@ The final output will be a set of three distinct, full-frame images from this sc
   }, []);
 
   const uploadHistoryImages = useCallback(async (uid: string, images: ImageResult[]): Promise<ImageResult[]> => {
+    if (!storage) {
+      throw new Error("尚未設定 Firebase Storage，請先於環境變數配置 storageBucket。");
+    }
+
     const timestamp = Date.now();
     const uploadedImages = await Promise.all(
       images.map(async (image, index) => {

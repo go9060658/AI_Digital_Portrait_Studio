@@ -16,5 +16,12 @@ const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const storage = getStorage(app);
+export const storage = (() => {
+  try {
+    return getStorage(app);
+  } catch (err) {
+    console.warn("Firebase Storage 初始化失敗。請確認已設定 storageBucket。", err);
+    return null;
+  }
+})();
 
