@@ -223,7 +223,7 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
     } finally {
       setIsLoading(false);
     }
-  }, [formData]);
+  }, [formData, user]);
 
   const handleGenerateVideo = useCallback(async (index: number) => {
     setImages(prev => prev.map((img, i) => 
