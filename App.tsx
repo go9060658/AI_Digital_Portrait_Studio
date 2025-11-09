@@ -66,7 +66,7 @@ The final output will be a set of three distinct, full-frame images from this sc
 2. A medium shot (from the waist up).
 3. A close-up shot (head and shoulders).`;
     setGeneratedPrompt(prompt);
-  }, [formData]);
+  }, [formData, user]);
 
   const handleFormChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -285,7 +285,7 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
             i === index ? { ...img, isGeneratingVideo: false, videoError: errorMessage } : img
         ));
     }
-}, [images, formData.aspectRatio, user]);
+}, [images, formData.aspectRatio]);
 
   const handleRestoreHistory = useCallback((item: HistoryItem) => {
     setFormData(item.formData);
