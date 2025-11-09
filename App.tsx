@@ -231,11 +231,9 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
         return newHistory;
       });
 
-      try {
-        await addHistoryRecord(user.uid, historySnapshot);
-      } catch (historyError) {
+      addHistoryRecord(user.uid, historySnapshot).catch((historyError) => {
         console.error('儲存歷史紀錄失敗：', historyError);
-      }
+      });
 
     } catch (err) {
       console.error(err);
