@@ -11,6 +11,8 @@ import AuthGate from './components/AuthGate';
 import { useAuth } from './contexts/AuthContext';
 import { addHistoryRecord, fetchUserHistory } from './services/historyService';
 
+const GEMINI_API_KEY = import.meta.env.VITE_API_KEY ?? '';
+
 // Fix: Defined the AIStudio interface globally to resolve a TypeScript error
 // about subsequent property declarations having conflicting types. This ensures
 // the type definition for window.aistudio matches other declarations.
@@ -109,6 +111,10 @@ The final output will be a set of three distinct, full-frame images from this sc
       setError('請先登入後再產生圖片。');
       return;
     }
+    if (!GEMINI_API_KEY) {
+      setError('尚未設定 Gemini API Key，請於環境變數新增 VITE_API_KEY。');
+      return;
+    }
     setIsLoading(true);
     setError(null);
     setImages([]);
@@ -127,7 +133,7 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
     ];
     
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+      const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
       
       const imagePromises = shotTypes.map(shot => {
         const parts: ({ text: string } | { inlineData: { data: string, mimeType: string }})[] = [];
@@ -223,11 +229,14 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
     ));
 
     try {
+        if (!GEMINI_API_KEY) {
+            throw new Error('尚未設定 Gemini API Key，請於環境變數新增 VITE_API_KEY。');
+        }
         if (!window.aistudio || !(await window.aistudio.hasSelectedApiKey())) {
             await window.aistudio?.openSelectKey();
         }
 
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
+        const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
         const targetImage = images[index];
         const base64Data = targetImage.src.split(',')[1];
         const mimeType = targetImage.src.match(/data:(.*);base64,/)?.[1] || 'image/jpeg';

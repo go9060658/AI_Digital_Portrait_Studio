@@ -84,7 +84,7 @@ AI_Digital_Portrait_Studio/
 3. **設定環境變數**
    - 建立 `.env` 或 `.env.local` 檔案（Vite 預設會讀取 `VITE_` 前綴變數）：
      ```
-     API_KEY=YOUR_GEMINI_OR_VEO_KEY
+     VITE_API_KEY=YOUR_GEMINI_OR_VEO_KEY
      VITE_FIREBASE_API_KEY=YOUR_FIREBASE_API_KEY
      VITE_FIREBASE_AUTH_DOMAIN=YOUR_FIREBASE_AUTH_DOMAIN
      VITE_FIREBASE_PROJECT_ID=YOUR_FIREBASE_PROJECT_ID
@@ -94,7 +94,7 @@ AI_Digital_Portrait_Studio/
      ```
    - 若想以系統環境變數方式設定，可在 PowerShell 執行：
      ```powershell
-     setx API_KEY "YOUR_GEMINI_OR_VEO_KEY"
+     setx VITE_API_KEY "YOUR_GEMINI_OR_VEO_KEY"
      setx VITE_FIREBASE_API_KEY "YOUR_FIREBASE_API_KEY"
      setx VITE_FIREBASE_AUTH_DOMAIN "YOUR_FIREBASE_AUTH_DOMAIN"
      setx VITE_FIREBASE_PROJECT_ID "YOUR_FIREBASE_PROJECT_ID"
