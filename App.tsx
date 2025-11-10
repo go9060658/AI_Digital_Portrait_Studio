@@ -484,8 +484,37 @@ The final output will be a set of three distinct, full-frame images from this sc
 
         const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
         const targetImage = images[index];
-        const base64Data = targetImage.src.split(',')[1];
-        const mimeType = targetImage.src.match(/data:(.*);base64,/)?.[1] || 'image/jpeg';
+
+        const resolveImageBytes = async (src: string) => {
+            if (src.startsWith('data:')) {
+                const match = src.match(/^data:(.*);base64,(.*)$/);
+                if (!match) throw new Error('無法解析圖片資料。');
+                return {
+                    imageBytes: match[2],
+                    mimeType: match[1] || 'image/jpeg',
+                };
+            }
+            const response = await fetch(src);
+            if (!response.ok) {
+                throw new Error('下載圖片失敗，無法生成動畫。');
+            }
+            const blob = await response.blob();
+            const arrayBuffer = await blob.arrayBuffer();
+            const uint8Array = new Uint8Array(arrayBuffer);
+            let binary = '';
+            const chunkSize = 0x8000;
+            for (let i = 0; i < uint8Array.length; i += chunkSize) {
+                const chunk = uint8Array.subarray(i, i + chunkSize);
+                binary += String.fromCharCode(...chunk);
+            }
+            const bytes = btoa(binary);
+            return {
+                imageBytes: bytes,
+                mimeType: blob.type || 'image/jpeg',
+            };
+        };
+
+        const { imageBytes, mimeType } = await resolveImageBytes(targetImage.src);
         
         const videoPrompt = "Make this a subtle, high-quality cinemagraph. The model's hair and clothing should move slightly in a gentle breeze.";
 
@@ -493,8 +522,8 @@ The final output will be a set of three distinct, full-frame images from this sc
             model: 'veo-3.1-fast-generate-preview',
             prompt: videoPrompt,
             image: {
-                imageBytes: base64Data,
-                mimeType: mimeType,
+                imageBytes,
+                mimeType,
             },
             config: {
                 numberOfVideos: 1,
