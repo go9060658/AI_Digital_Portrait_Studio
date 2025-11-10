@@ -66,7 +66,6 @@ The model has a ${formData.expression} expression and is in a ${formData.pose} p
 ${formData.faceImage ? `\nCRITICAL: The model's face must be identical to the face in the provided reference image.` : ''}
 ${formData.objectImage ? `\nCRITICAL: The scene must prominently feature the object from the provided reference image.` : ''}
 Photographic style: Lit with ${formData.lighting}. The image should be detailed, ultra-realistic, photorealistic, high resolution (8k), cinematic, with a shallow depth of field and beautiful bokeh.
-Image composition: The image must have a ${formData.aspectRatio} aspect ratio.
 The final output will be a set of three distinct, full-frame images from this scene:
 1. A full-body shot.
 2. A medium shot (from the waist up).
@@ -247,17 +246,16 @@ A ${formData.modelGender === '女性模特兒' ? 'female' : 'male'} model with a
 The setting is ${formData.background}.
 The model has a ${formData.expression} expression and is in a ${formData.pose} pose.${formData.additionalDescription ? `\nAdditional details: ${formData.additionalDescription}.` : ''}
 Photographic style: Lit with ${formData.lighting}. This must be a single, full-frame photograph. The image should be detailed, ultra-realistic, photorealistic, high resolution (8k), cinematic, with a shallow depth of field and beautiful bokeh. Do not create collages, diptychs, triptychs, or any split-screen images.
-Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
+The final output will be a set of three distinct, full-frame images from this scene:
+1. A full-body shot.
+2. A medium shot (from the waist up).
+3. A close-up shot (head and shoulders).`;
 
-    const ratioInstruction = `The image MUST strictly use a ${formData.aspectRatio} aspect ratio.`;
     const shotTypes = [
-      { prompt: 'CRITICAL: The photograph MUST be a full-body shot, showing the model from head to toe. ', label: '全身' },
-      { prompt: 'CRITICAL: The photograph MUST be a medium shot, capturing the model from the waist up. ', label: '半身' },
-      { prompt: 'CRITICAL: The photograph MUST be a close-up shot, focusing on the model\'s head and shoulders. ', label: '特寫' },
-    ].map((shot) => ({
-      prompt: `${shot.prompt}${ratioInstruction}`,
-      label: shot.label,
-    }));
+      { prompt: 'CRITICAL: The photograph MUST be a full-body shot, showing the model from head to toe.', label: '全身' },
+      { prompt: 'CRITICAL: The photograph MUST be a medium shot, capturing the model from the waist up.', label: '半身' },
+      { prompt: 'CRITICAL: The photograph MUST be a close-up shot, focusing on the model\'s head and shoulders.', label: '特寫' },
+    ];
     
     try {
       const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
@@ -333,6 +331,9 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
           contents: { parts },
           config: {
             responseModalities: [Modality.IMAGE],
+            imageConfig: {
+              aspectRatio: formData.aspectRatio,
+            },
           },
         });
 
