@@ -1,3 +1,9 @@
+export interface ReferenceImageData {
+  data: string;
+  mimeType: string;
+  name: string;
+}
+
 export interface FormDataState {
   productName: string;
   clothingStyle: string;
@@ -6,12 +12,32 @@ export interface FormDataState {
   background: string;
   expression: string;
   pose: string;
-  lens: string;
   lighting: string;
   aspectRatio: string;
-  faceImage: { data: string; mimeType: string; name: string; } | null;
-  objectImage: { data: string; mimeType: string; name: string; } | null;
+  faceImage: ReferenceImageData | null;
+  objectImage: ReferenceImageData | null;
   additionalDescription: string;
+}
+
+export interface HistoryImageMetadata {
+  name: string;
+  mimeType: string;
+  hasData: boolean;
+}
+
+export interface HistoryFormData {
+  productName: string;
+  clothingStyle: string;
+  clothingSeason: string;
+  modelGender: string;
+  background: string;
+  expression: string;
+  pose: string;
+  lighting: string;
+  aspectRatio: string;
+  additionalDescription: string;
+  faceImage: HistoryImageMetadata | null;
+  objectImage: HistoryImageMetadata | null;
 }
 
 export interface ImageResult {
@@ -24,7 +50,7 @@ export interface ImageResult {
 
 export interface HistoryItem {
   id?: string;
-  formData: FormDataState;
+  formData: HistoryFormData;
   images: ImageResult[];
   createdAt?: number;
 }

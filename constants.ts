@@ -51,8 +51,6 @@ export const EXPRESSIONS = [
   "喜悅",
 ];
 
-export const LENSES = ["35mm", "50mm", "50mm f/1.2 prime", "85mm", "100mm Macro", "135mm"];
-
 export const LIGHTING_CONDITIONS = [
   "光線條件良好的自然光",
   "柔和攝影棚光",

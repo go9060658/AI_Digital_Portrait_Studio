@@ -34,7 +34,6 @@ const normalizeHistoryFormData = (raw: DocumentData | undefined): HistoryFormDat
     background: raw?.background ?? "",
     expression: raw?.expression ?? "",
     pose: raw?.pose ?? "",
-    lens: raw?.lens ?? "",
     lighting: raw?.lighting ?? "",
     aspectRatio: raw?.aspectRatio ?? "",
     additionalDescription: raw?.additionalDescription ?? "",

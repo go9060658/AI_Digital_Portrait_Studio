@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { GoogleGenAI, Modality } from "@google/genai";
 import type { FormDataState, ImageResult, HistoryItem, HistoryFormData } from './types';
-import { CLOTHING_STYLES, EXPRESSIONS, LENSES, LIGHTING_CONDITIONS, ASPECT_RATIOS, BACKGROUNDS, CLOTHING_SEASONS, POSES, MODEL_GENDERS } from './constants';
+import { CLOTHING_STYLES, EXPRESSIONS, LIGHTING_CONDITIONS, ASPECT_RATIOS, BACKGROUNDS, CLOTHING_SEASONS, POSES, MODEL_GENDERS } from './constants';
 import Header from './components/Header';
 import PromptForm from './components/PromptForm';
 import PromptDisplay from './components/PromptDisplay';
@@ -39,7 +39,6 @@ const App: React.FC = () => {
     background: BACKGROUNDS[11], // 台灣阿里山日出雲海
     expression: EXPRESSIONS[3], // 自信
     pose: POSES[0],
-    lens: LENSES[1], // 50mm
     lighting: LIGHTING_CONDITIONS[0],
     aspectRatio: ASPECT_RATIOS[0],
     faceImage: null,
@@ -66,7 +65,7 @@ The setting is ${formData.background}.
 The model has a ${formData.expression} expression and is in a ${formData.pose} pose.${formData.additionalDescription ? `\nAdditional details: ${formData.additionalDescription}.` : ''}
 ${formData.faceImage ? `\nCRITICAL: The model's face must be identical to the face in the provided reference image.` : ''}
 ${formData.objectImage ? `\nCRITICAL: The scene must prominently feature the object from the provided reference image.` : ''}
-Photographic style: Shot on a ${formData.lens} lens with ${formData.lighting}. The image should be detailed, ultra-realistic, photorealistic, high resolution (8k), cinematic, with a shallow depth of field and beautiful bokeh.
+Photographic style: Lit with ${formData.lighting}. The image should be detailed, ultra-realistic, photorealistic, high resolution (8k), cinematic, with a shallow depth of field and beautiful bokeh.
 Image composition: The image must have a ${formData.aspectRatio} aspect ratio.
 The final output will be a set of three distinct, full-frame images from this scene:
 1. A full-body shot.
@@ -120,7 +119,6 @@ The final output will be a set of three distinct, full-frame images from this sc
       background: data.background,
       expression: data.expression,
       pose: data.pose,
-      lens: data.lens,
       lighting: data.lighting,
       aspectRatio: data.aspectRatio,
       additionalDescription: data.additionalDescription,
@@ -151,7 +149,6 @@ The final output will be a set of three distinct, full-frame images from this sc
       background: historyData.background,
       expression: historyData.expression,
       pose: historyData.pose,
-      lens: historyData.lens,
       lighting: historyData.lighting,
       aspectRatio: historyData.aspectRatio,
       additionalDescription: historyData.additionalDescription,
@@ -233,14 +230,18 @@ The final output will be a set of three distinct, full-frame images from this sc
 A ${formData.modelGender === '女性模特兒' ? 'female' : 'male'} model with a ${formData.clothingStyle} aesthetic is wearing clothing suitable for the ${formData.clothingSeason}.
 The setting is ${formData.background}.
 The model has a ${formData.expression} expression and is in a ${formData.pose} pose.${formData.additionalDescription ? `\nAdditional details: ${formData.additionalDescription}.` : ''}
-Photographic style: Shot on a ${formData.lens} lens with ${formData.lighting}. This must be a single, full-frame photograph. The image should be detailed, ultra-realistic, photorealistic, high resolution (8k), cinematic, with a shallow depth of field and beautiful bokeh. Do not create collages, diptychs, triptychs, or any split-screen images.
+Photographic style: Lit with ${formData.lighting}. This must be a single, full-frame photograph. The image should be detailed, ultra-realistic, photorealistic, high resolution (8k), cinematic, with a shallow depth of field and beautiful bokeh. Do not create collages, diptychs, triptychs, or any split-screen images.
 Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
 
+    const ratioInstruction = `The image MUST strictly use a ${formData.aspectRatio} aspect ratio.`;
     const shotTypes = [
-      { prompt: 'CRITICAL: The photograph MUST be a full-body shot, showing the model from head to toe.', label: '全身' },
-      { prompt: 'CRITICAL: The photograph MUST be a medium shot, capturing the model from the waist up.', label: '半身' },
-      { prompt: 'CRITICAL: The photograph MUST be a close-up shot, focusing on the model\'s head and shoulders.', label: '特寫' },
-    ];
+      { prompt: 'CRITICAL: The photograph MUST be a full-body shot, showing the model from head to toe. ', label: '全身' },
+      { prompt: 'CRITICAL: The photograph MUST be a medium shot, capturing the model from the waist up. ', label: '半身' },
+      { prompt: 'CRITICAL: The photograph MUST be a close-up shot, focusing on the model\'s head and shoulders. ', label: '特寫' },
+    ].map((shot) => ({
+      prompt: `${shot.prompt}${ratioInstruction}`,
+      label: shot.label,
+    }));
     
     try {
       const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });

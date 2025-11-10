@@ -1,6 +1,6 @@
 import React from 'react';
 import type { FormDataState } from '../types';
-import { CLOTHING_STYLES, EXPRESSIONS, LENSES, LIGHTING_CONDITIONS, ASPECT_RATIOS, BACKGROUNDS, CLOTHING_SEASONS, POSES, MODEL_GENDERS } from '../constants';
+import { CLOTHING_STYLES, EXPRESSIONS, LIGHTING_CONDITIONS, ASPECT_RATIOS, BACKGROUNDS, CLOTHING_SEASONS, POSES, MODEL_GENDERS } from '../constants';
 import InputGroup from './InputGroup';
 import SpinnerIcon from './icons/SpinnerIcon';
 import RemoveIcon from './icons/RemoveIcon';
@@ -115,12 +115,7 @@ const PromptForm: React.FC<PromptFormProps> = ({ formData, onFormChange, onFileC
           </InputGroup>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <InputGroup label="鏡頭焦距">
-            <select name="lens" value={formData.lens} onChange={onFormChange} className="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
-              {LENSES.map(lens => <option key={lens} value={lens}>{lens}</option>)}
-            </select>
-          </InputGroup>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <InputGroup label="光線描述">
             <select name="lighting" value={formData.lighting} onChange={onFormChange} className="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
               {LIGHTING_CONDITIONS.map(light => <option key={light} value={light}>{light}</option>)}
