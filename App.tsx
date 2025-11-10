@@ -521,7 +521,7 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [restoreFormDataFromHistory]);
 
-  const handleShare = useCallback(async (platform: 'facebook' | 'instagram') => {
+  const handleFacebookShare = useCallback(async () => {
     if (!user) {
       window.alert('請先登入後再分享。');
       return;
@@ -535,43 +535,28 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
 
     const message = "生成 by FlyPig AI 人像攝影棚 https://studio.icareu.tw/ #FlyPigAI";
 
-    const copyMessage = async () => {
-      try {
-        await navigator.clipboard.writeText(message);
-      } catch (clipboardError) {
-        console.error('複製分享文字失敗：', clipboardError);
-      }
-    };
-
-    const rewardShare = async () => {
-      try {
-        const credits = await rewardCreditForShare(user.uid);
-        setRemainingCredits(credits);
-      } catch (shareError) {
-        console.error('分享獲得額度失敗：', shareError);
-      }
-    };
-
-    await copyMessage();
+    try {
+      await navigator.clipboard.writeText(message);
+    } catch (clipboardError) {
+      console.error('複製分享文字失敗：', clipboardError);
+    }
 
     if (primaryImage.src.startsWith('data:')) {
       window.alert('此圖片尚未同步到雲端，請從歷史紀錄下載後再分享。分享文字已複製，可直接貼上使用。');
       return;
     }
 
-    if (platform === 'facebook') {
-      const url = new URL('https://www.facebook.com/sharer/sharer.php');
-      url.searchParams.set('u', primaryImage.src);
-      url.searchParams.set('quote', message);
-      window.open(url.toString(), '_blank', 'noopener,noreferrer');
-      await rewardShare();
-      return;
-    }
+    const url = new URL('https://www.facebook.com/sharer/sharer.php');
+    url.searchParams.set('u', primaryImage.src);
+    url.searchParams.set('quote', message);
+    window.open(url.toString(), '_blank', 'noopener,noreferrer');
 
-    window.open(primaryImage.src, '_blank', 'noopener,noreferrer');
-    window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer');
-    window.alert('已開啟 Instagram 與圖片視窗，分享文字已複製，請於 Instagram 上傳圖片並貼上內容。');
-    await rewardShare();
+    try {
+      const credits = await rewardCreditForShare(user.uid);
+      setRemainingCredits(credits);
+    } catch (shareError) {
+      console.error('分享獲得額度失敗：', shareError);
+    }
   }, [user, images]);
 
 
@@ -652,7 +637,7 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
               productName={formData.productName}
               onGenerateVideo={handleGenerateVideo}
               aspectRatio={formData.aspectRatio}
-              onShare={handleShare}
+              onShareFacebook={handleFacebookShare}
               canShare={images.length > 0}
             />
           </div>

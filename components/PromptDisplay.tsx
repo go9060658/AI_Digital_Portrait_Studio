@@ -13,17 +13,29 @@ interface PromptDisplayProps {
   productName: string;
   onGenerateVideo: (index: number) => void;
   aspectRatio: string;
-  onShare: (platform: 'facebook' | 'instagram') => Promise<void>;
+  onShareFacebook: () => Promise<void>;
   canShare: boolean;
 }
 
-const shareUrls = {
-  facebook: "https://www.facebook.com/sharer/sharer.php",
-  instagram: "https://www.instagram.com/",
-};
-
-const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading, error, productName, onGenerateVideo, aspectRatio, onShare, canShare }) => {
+const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading, error, productName, onGenerateVideo, aspectRatio, onShareFacebook, canShare }) => {
   const [isCopied, setIsCopied] = useState(false);
+
+  const handleDownload = useCallback(async (fileUrl: string, filename: string) => {
+    try {
+      const response = await fetch(fileUrl);
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('下載檔案失敗：', err);
+    }
+  }, []);
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(prompt).then(() => {
@@ -97,36 +109,26 @@ const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading
                         )}
                       </button>
                     )}
-                  <a
-                    href={image.videoSrc || image.src}
-                    download={filename}
+                  <button
+                    onClick={() => handleDownload(image.videoSrc || image.src, filename)}
                     className="w-full flex justify-center items-center gap-2 bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-slate-500"
                   >
                     <DownloadIcon className="w-5 h-5" />
                     {image.videoSrc ? `下載影片 (${image.label})` : `下載圖片 (${image.label})`}
-                  </a>
+                  </button>
                 </div>
               </div>
             );
           })}
-          <div className="grid grid-cols-2 gap-2 text-xs mt-4">
+          <div className="grid grid-cols-1 gap-2 text-xs mt-4">
             <button
               onClick={() => {
-                void onShare('facebook');
+                void onShareFacebook();
               }}
               disabled={!canShare || isLoading}
               className="bg-blue-600 hover:bg-blue-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white py-2 rounded-lg transition-colors"
             >
               分享到 Facebook
-            </button>
-            <button
-              onClick={() => {
-                void onShare('instagram');
-              }}
-              disabled={!canShare || isLoading}
-              className="bg-pink-600 hover:bg-pink-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white py-2 rounded-lg transition-colors"
-            >
-              分享到 Instagram
             </button>
           </div>
         </div>
