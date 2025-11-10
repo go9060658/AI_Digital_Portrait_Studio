@@ -12,9 +12,12 @@ interface PromptDisplayProps {
   error: string | null;
   productName: string;
   onGenerateVideo: (index: number) => void;
+  aspectRatio: string;
 }
 
-const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading, error, productName, onGenerateVideo }) => {
+const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading, error, productName, onGenerateVideo, aspectRatio }) => {
+  const supportedVideoRatios = ['16:9', '9:16'];
+  const isVideoGenerationSupported = supportedVideoRatios.includes(aspectRatio);
   const [isCopied, setIsCopied] = useState(false);
 
   const handleDownload = useCallback(async (fileUrl: string, filename: string) => {
@@ -89,7 +92,12 @@ const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading
                    {!image.videoSrc && (
                       <button
                         onClick={() => onGenerateVideo(index)}
-                        disabled={image.isGeneratingVideo}
+                        disabled={image.isGeneratingVideo || !isVideoGenerationSupported}
+                        title={
+                          isVideoGenerationSupported
+                            ? undefined
+                            : '動態影像僅支援 16:9 或 9:16 長寬比，請調整設定後再試。'
+                        }
                         className="w-full flex justify-center items-center gap-2 bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-teal-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-teal-500 disabled:bg-slate-600 disabled:cursor-not-allowed"
                       >
                         {image.isGeneratingVideo ? (
@@ -102,6 +110,11 @@ const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading
                         )}
                       </button>
                     )}
+                  {!isVideoGenerationSupported && (
+                    <p className="text-xs text-slate-400 text-center">
+                      動態影像目前僅支援 16:9 或 9:16，請調整圖片長寬比後再試。
+                    </p>
+                  )}
                   <button
                     onClick={() => handleDownload(image.videoSrc || image.src, filename)}
                     className="w-full flex justify-center items-center gap-2 bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-slate-500"

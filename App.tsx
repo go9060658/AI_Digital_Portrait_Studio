@@ -459,7 +459,18 @@ The final output will be a set of three distinct, full-frame images from this sc
   }, [formData, user, uploadHistoryImages, sanitizeFormDataForHistory, remainingCredits, isLoading]);
 
   const handleGenerateVideo = useCallback(async (index: number) => {
-    setImages(prev => prev.map((img, i) => 
+    const supportedVideoRatios = ['16:9', '9:16'];
+    const selectedAspectRatio = formData.aspectRatio;
+    if (!supportedVideoRatios.includes(selectedAspectRatio)) {
+      setImages(prev => prev.map((img, i) =>
+        i === index
+          ? { ...img, isGeneratingVideo: false, videoError: '此長寬比不支援動態影像，請調整為 16:9 或 9:16 後再試。' }
+          : img
+      ));
+      return;
+    }
+
+    setImages(prev => prev.map((img, i) =>
         i === index ? { ...img, isGeneratingVideo: true, videoError: null } : img
     ));
 
@@ -615,6 +626,7 @@ The final output will be a set of three distinct, full-frame images from this sc
               error={error}
               productName={formData.productName}
               onGenerateVideo={handleGenerateVideo}
+              aspectRatio={formData.aspectRatio}
             />
           </div>
         </main>
