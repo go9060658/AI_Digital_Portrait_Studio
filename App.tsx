@@ -205,7 +205,15 @@ The final output will be a set of three distinct, full-frame images from this sc
       return;
     }
     if (remainingCredits !== null && remainingCredits <= 0) {
-      setError('您的生成次數已用完，分享作品即可獲得額外生成機會。');
+      setError(`您的免費生成次數已用完。
+
+若生成的作品滿意，歡迎 FB 分享推薦 https://studio.icareu.tw/
+
+本應用服務目前已於 GitHub 免費開源，歡迎自行部署。
+
+使用時請遵守開源協議。
+
+若有委外部署 or 客製化選項需求，請來信 flypig@icareu.tw`);
       return;
     }
 
@@ -215,7 +223,15 @@ The final output will be a set of three distinct, full-frame images from this sc
       setRemainingCredits(creditsAfterConsume);
     } catch (consumeError) {
       if (consumeError instanceof Error && consumeError.message === "NO_CREDITS") {
-        setError('您的生成次數已用完，分享作品即可獲得額外生成機會。');
+        setError(`您的免費生成次數已用完。
+
+若生成的作品滿意，歡迎 FB 分享推薦 https://studio.icareu.tw/
+
+本應用服務目前已於 GitHub 免費開源，歡迎自行部署。
+
+使用時請遵守開源協議。
+
+若有委外部署 or 客製化選項需求，請來信 flypig@icareu.tw`);
       } else {
         console.error('扣除生成次數失敗：', consumeError);
         setError('無法確認生成次數，請稍後再試。');
