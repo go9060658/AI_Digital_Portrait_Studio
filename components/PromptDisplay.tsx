@@ -12,12 +12,11 @@ interface PromptDisplayProps {
   error: string | null;
   productName: string;
   onGenerateVideo: (index: number) => void;
-  aspectRatio: string;
   onShareFacebook: () => Promise<void>;
   canShare: boolean;
 }
 
-const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading, error, productName, onGenerateVideo, aspectRatio, onShareFacebook, canShare }) => {
+const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading, error, productName, onGenerateVideo, onShareFacebook, canShare }) => {
   const [isCopied, setIsCopied] = useState(false);
 
   const handleDownload = useCallback(async (fileUrl: string, filename: string) => {
@@ -44,9 +43,6 @@ const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading
     });
   }, [prompt]);
   
-  const supportedVideoRatios = ['16:9', '9:16'];
-  const isVideoGenerationSupported = supportedVideoRatios.includes(aspectRatio);
-
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -95,9 +91,8 @@ const PromptDisplay: React.FC<PromptDisplayProps> = ({ prompt, images, isLoading
                    {!image.videoSrc && (
                       <button
                         onClick={() => onGenerateVideo(index)}
-                        disabled={image.isGeneratingVideo || !isVideoGenerationSupported}
+                        disabled={image.isGeneratingVideo}
                         className="w-full flex justify-center items-center gap-2 bg-teal-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-teal-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-teal-500 disabled:bg-slate-600 disabled:cursor-not-allowed"
-                        title={!isVideoGenerationSupported ? '動態影像生成僅支援 16:9 與 9:16 的長寬比。' : ''}
                       >
                         {image.isGeneratingVideo ? (
                           <>

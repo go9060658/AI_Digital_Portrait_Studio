@@ -535,28 +535,77 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
 
     const message = "生成 by FlyPig AI 人像攝影棚 https://studio.icareu.tw/ #FlyPigAI";
 
+    const getBlobFromSrc = async (src: string) => {
+      if (src.startsWith('data:')) {
+        const response = await fetch(src);
+        return response.blob();
+      }
+      const response = await fetch(src);
+      return response.blob();
+    };
+
+    const rewardShare = async () => {
+      try {
+        const credits = await rewardCreditForShare(user.uid);
+        setRemainingCredits(credits);
+      } catch (shareError) {
+        console.error('分享獲得額度失敗：', shareError);
+      }
+    };
+
+    const tryWebShare = async (): Promise<'shared' | 'cancelled' | 'unsupported'> => {
+      try {
+        const blob = await getBlobFromSrc(primaryImage.src);
+        const file = new File([blob], `flypig-ai-${Date.now()}.png`, { type: blob.type || 'image/png' });
+        if (navigator.canShare && navigator.canShare({ files: [file], text: message })) {
+          await navigator.share({ files: [file], text: message, title: 'FlyPig AI 作品分享' });
+          return 'shared';
+        }
+        if (navigator.share) {
+          await navigator.share({ text: message, title: 'FlyPig AI 作品分享' });
+          return 'shared';
+        }
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') {
+          return 'cancelled';
+        }
+        console.error('Web Share 失敗：', err);
+      }
+      return 'unsupported';
+    };
+
+    const shareResult = await tryWebShare();
+    if (shareResult === 'shared') {
+      await rewardShare();
+      return;
+    }
+    if (shareResult === 'cancelled') {
+      return;
+    }
+
+    if (primaryImage.src.startsWith('data:')) {
+      window.alert('圖片尚未同步至雲端，已為您複製分享文字，請先下載圖片後再自行上傳到 Facebook。');
+      try {
+        await navigator.clipboard.writeText(message);
+      } catch (clipboardError) {
+        console.error('複製分享文字失敗：', clipboardError);
+      }
+      return;
+    }
+
     try {
       await navigator.clipboard.writeText(message);
     } catch (clipboardError) {
       console.error('複製分享文字失敗：', clipboardError);
     }
 
-    if (primaryImage.src.startsWith('data:')) {
-      window.alert('此圖片尚未同步到雲端，請從歷史紀錄下載後再分享。分享文字已複製，可直接貼上使用。');
-      return;
-    }
-
     const url = new URL('https://www.facebook.com/sharer/sharer.php');
-    url.searchParams.set('u', primaryImage.src);
+    url.searchParams.set('u', 'https://studio.icareu.tw/');
     url.searchParams.set('quote', message);
+    url.searchParams.set('hashtag', '#FlyPigAI');
     window.open(url.toString(), '_blank', 'noopener,noreferrer');
 
-    try {
-      const credits = await rewardCreditForShare(user.uid);
-      setRemainingCredits(credits);
-    } catch (shareError) {
-      console.error('分享獲得額度失敗：', shareError);
-    }
+    await rewardShare();
   }, [user, images]);
 
 
@@ -636,7 +685,6 @@ Image composition: The image must have a ${formData.aspectRatio} aspect ratio.`;
               error={error}
               productName={formData.productName}
               onGenerateVideo={handleGenerateVideo}
-              aspectRatio={formData.aspectRatio}
               onShareFacebook={handleFacebookShare}
               canShare={images.length > 0}
             />
