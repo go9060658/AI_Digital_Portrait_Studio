@@ -30,7 +30,7 @@ const Header: React.FC<HeaderProps> = ({ remainingCredits, isQuotaLoading }) => 
           <div>
             <p className="font-semibold">歡迎，{user.email}</p>
             <p className="text-slate-400 text-xs">
-              剩餘生成次數：{formatCredits(remainingCredits, isQuotaLoading)}（分享一次可增加一次機會）
+              剩餘生成次數：{formatCredits(remainingCredits, isQuotaLoading)}（每位新註冊使用者僅享 3 次）
             </p>
           </div>
           <button
