@@ -31,6 +31,8 @@ export default defineConfig(({ mode }) => {
         outDir: 'dist',
         // 產生 source map（可選，用於除錯）
         sourcemap: false,
+        // 確保資源路徑正確
+        assetsDir: 'assets',
         // 優化建置
         rollupOptions: {
           output: {
@@ -38,6 +40,10 @@ export default defineConfig(({ mode }) => {
               'react-vendor': ['react', 'react-dom'],
               'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore', 'firebase/storage'],
             },
+            // 確保資源檔案名稱包含 hash，避免快取問題
+            assetFileNames: 'assets/[name]-[hash][extname]',
+            chunkFileNames: 'assets/[name]-[hash].js',
+            entryFileNames: 'assets/[name]-[hash].js',
           },
         },
       },
