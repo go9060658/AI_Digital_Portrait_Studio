@@ -125,3 +125,4 @@ export function getFileExtensionFromMimeType(mimeType: string): string {
   return extensionRaw === "jpeg" ? "jpg" : extensionRaw;
 }
 
+
