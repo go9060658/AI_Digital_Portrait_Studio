@@ -3,7 +3,33 @@
 **版本：v3.5** | [v3.0 穩定版（stablev3.0 分支）](https://github.com/mkhsu2002/AI_Digital_Portrait_Studio/tree/stablev3.0)
 
 「電商人像攝影棚」是一套基於 React + Vite 的網頁應用，整合 Google Gemini 影像模型與 Firebase 服務，協助品牌快速生成多視角的人像商品圖。專案已開源，歡迎自行部署並依需求調整。
+
 英語說明（English Guide）：[README.en.md](./README.en.md)
+
+## 📋 版本資訊
+
+### v3.5（最新版本）
+
+**主要改動**：
+- ✅ **程式碼組織與模組化**：將業務邏輯拆分為多個自訂 Hooks，提升可維護性
+- ✅ **錯誤處理改善**：建立統一錯誤處理機制，提供更友善的錯誤訊息
+- ✅ **API Key 統一管理**：使用 `ApiKeyContext` 統一管理 API Key，支援環境變數與瀏覽器擴充功能
+- ✅ **Firebase 錯誤處理改善**：加入環境變數驗證和詳細錯誤訊息
+- ✅ **UI/UX 優化**：重新設計 API Key 設定彈出視窗，加入鍵盤快捷鍵支援（Ctrl+Enter / Cmd+Enter）
+- ✅ **圖片下載修復**：修復 Firebase Storage 圖片下載的 CORS 問題
+- ✅ **錯誤診斷改進**：改進 API Key 處理和錯誤診斷，確保格式正確
+
+**詳細變更記錄**：請參考 [CHANGELOG_v3.5.md](./CHANGELOG_v3.5.md)
+
+### v3.0（穩定版）
+
+v3.0 是穩定版本，包含完整的核心功能：
+- 多視角影像生成
+- 動態影像延伸
+- 歷史紀錄與還原
+- Firebase 認證與儲存
+
+如需使用穩定版本，請切換到 `stablev3.0` 分支。
 
 ## 核心功能
 
@@ -399,6 +425,7 @@ firebase deploy --only hosting
 - [API_KEY_CONTEXT_REFACTOR.md](./API_KEY_CONTEXT_REFACTOR.md) - API Key 統一管理說明（v3.5）
 - [cloudflare-pages-setup.md](./cloudflare-pages-setup.md) - Cloudflare Pages 詳細設定指南
 - [CHANGELOG_v3.5.md](./CHANGELOG_v3.5.md) - v3.5 版本改動總結
+- [MERGE_SUMMARY_v3.5.md](./MERGE_SUMMARY_v3.5.md) - v3.5 合併總結
 
 > 預設的 `main` 分支為每個帳號提供 100 次免費生成額度；若需要無限制使用，請改用 `unlimited_v3.0` 分支部署。
 
