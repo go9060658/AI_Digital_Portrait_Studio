@@ -72,14 +72,14 @@ const firebaseConfig = {
 };
 
 let app;
-let auth;
-let db;
+let authInstance;
+let dbInstance;
 let storageInstance: FirebaseStorage | null = null;
 
 try {
   app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
+  authInstance = getAuth(app);
+  dbInstance = getFirestore(app);
   
   try {
     storageInstance = getStorage(app);
@@ -110,8 +110,11 @@ try {
   
   // 即使初始化失敗，也導出 null 值，避免應用程式完全崩潰
   // 組件應該檢查這些值是否為 null
+  authInstance = null as any;
+  dbInstance = null as any;
 }
 
-export { auth, db };
+export const auth = authInstance;
+export const db = dbInstance;
 export const storage = storageInstance;
 
