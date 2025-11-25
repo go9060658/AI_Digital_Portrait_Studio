@@ -123,12 +123,13 @@ export const firebaseDiagnostics = {
   isInitialized: authInstance !== null && dbInstance !== null,
   missingVars: [...missingVars], // 複製陣列避免引用問題
   hasInitializationError: authInstance === null || dbInstance === null,
-};
-
-// 導出診斷資訊
-export const firebaseDiagnostics = {
-  isInitialized: authInstance !== null && dbInstance !== null,
-  missingVars,
-  hasInitializationError: authInstance === null || dbInstance === null,
+  envVarStatus: {
+    VITE_FIREBASE_API_KEY: requiredEnvVars.apiKey ? '已設定' : '❌ 未設定',
+    VITE_FIREBASE_AUTH_DOMAIN: requiredEnvVars.authDomain ? '已設定' : '❌ 未設定',
+    VITE_FIREBASE_PROJECT_ID: requiredEnvVars.projectId ? '已設定' : '❌ 未設定',
+    VITE_FIREBASE_STORAGE_BUCKET: requiredEnvVars.storageBucket ? '已設定' : '❌ 未設定',
+    VITE_FIREBASE_MESSAGING_SENDER_ID: requiredEnvVars.messagingSenderId ? '已設定' : '❌ 未設定',
+    VITE_FIREBASE_APP_ID: requiredEnvVars.appId ? '已設定' : '❌ 未設定',
+  }
 };
 
