@@ -58,7 +58,7 @@ If you want to deploy it yourself, please refer to the GitHub/Cloudflare Pages d
    ```
 3. **Configure environment variables** (create `.env.local` in the project root)
    ```dotenv
-   # Gemini API Key (optional, can also be provided via browser extension)
+   # Gemini API Key (optional, but not recommended. After deployment, users can manually enter their Gemini API Key on the homepage after login. Storing the API Key locally reduces the risk of exposure)
    VITE_API_KEY=YOUR_GEMINI_OR_VEO_API_KEY
    
    # Firebase Configuration (required)
@@ -174,7 +174,7 @@ The project has GitHub Actions automated deployment workflows configured. When y
    - Go to GitHub repository → **Settings** → **Secrets and variables** → **Actions**
    - Click **New repository secret** and add the following Secrets:
      ```
-     VITE_API_KEY=YOUR_GEMINI_API_KEY (optional)
+     VITE_API_KEY=YOUR_GEMINI_API_KEY (optional, but not recommended. After deployment, users can manually enter their Gemini API Key on the homepage after login. Storing the API Key locally reduces the risk of exposure)
      VITE_FIREBASE_API_KEY=YOUR_FIREBASE_API_KEY
      VITE_FIREBASE_AUTH_DOMAIN=xxx.firebaseapp.com
      VITE_FIREBASE_PROJECT_ID=YOUR_PROJECT_ID
@@ -260,7 +260,7 @@ The project has GitHub Actions automated deployment workflows configured. When y
    
    **Optional Variables**:
    ```
-   VITE_API_KEY = YOUR_GEMINI_API_KEY (optional)
+   VITE_API_KEY = YOUR_GEMINI_API_KEY (optional, but not recommended. After deployment, users can manually enter their Gemini API Key on the homepage after login. Storing the API Key locally reduces the risk of exposure)
    VITE_BASE_PATH = / (usually keep as /)
    ```
    

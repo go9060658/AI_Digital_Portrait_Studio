@@ -58,7 +58,7 @@
    ```
 3. **設定環境變數**（於專案根目錄建立 `.env.local`）
    ```dotenv
-   # Gemini API Key（可選，也可透過瀏覽器擴充功能提供）
+   # Gemini API Key（可選，但不建議，可待部署完成後，直接於登入後首頁上手動輸入 Gemini API Key，將API Key 儲存於本地，可降低外洩風險）
    VITE_API_KEY=你的_GEMINI_OR_VEO_API_KEY
    
    # Firebase 設定（必要）
@@ -174,7 +174,7 @@
    - 前往 GitHub 倉庫 → **Settings** → **Secrets and variables** → **Actions**
    - 點擊 **New repository secret**，新增以下 Secrets：
      ```
-     VITE_API_KEY=你的_GEMINI_API_KEY（可選）
+     VITE_API_KEY=你的_GEMINI_API_KEY（可選，但不建議，可待部署完成後，直接於登入後首頁上手動輸入 Gemini API Key，將API Key 儲存於本地，可降低外洩風險）
      VITE_FIREBASE_API_KEY=你的_FIREBASE_API_KEY
      VITE_FIREBASE_AUTH_DOMAIN=xxx.firebaseapp.com
      VITE_FIREBASE_PROJECT_ID=你的_PROJECT_ID
@@ -260,7 +260,7 @@
    
    **可選變數**：
    ```
-   VITE_API_KEY = 你的_GEMINI_API_KEY（可選）
+   VITE_API_KEY = 你的_GEMINI_API_KEY（可選，但不建議，可待部署完成後，直接於登入後首頁上手動輸入 Gemini API Key，將API Key 儲存於本地，可降低外洩風險）
    VITE_BASE_PATH = /（通常保持為 /）
    ```
    
