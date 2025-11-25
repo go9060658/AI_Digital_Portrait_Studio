@@ -96,12 +96,14 @@ export const ApiKeyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // 優先使用環境變數（部署時設定）
     const envKey = import.meta.env.VITE_API_KEY;
     if (envKey && envKey.trim() !== '') {
-      return envKey;
+      // 移除所有空白字符（包括換行、空格等）
+      return envKey.trim().replace(/\s+/g, '');
     }
     
     // 其次使用手動輸入的 API Key（儲存在 localStorage）
     if (manualApiKey && manualApiKey.trim() !== '') {
-      return manualApiKey;
+      // 移除所有空白字符（包括換行、空格等）
+      return manualApiKey.trim().replace(/\s+/g, '');
     }
     
     // 如果有瀏覽器擴充功能，擴充功能會自動處理 API Key
@@ -194,10 +196,11 @@ export const ApiKeyProvider: React.FC<{ children: React.ReactNode }> = ({ childr
    * 設定手動輸入的 API Key（儲存在 localStorage）
    */
   const setManualApiKey = useCallback((apiKey: string) => {
-    const trimmedKey = apiKey.trim();
-    if (trimmedKey) {
-      localStorage.setItem(MANUAL_API_KEY_STORAGE_KEY, trimmedKey);
-      setManualApiKeyState(trimmedKey);
+    // 移除所有空白字符（包括換行、空格等），確保格式正確
+    const cleanedKey = apiKey.trim().replace(/\s+/g, '');
+    if (cleanedKey) {
+      localStorage.setItem(MANUAL_API_KEY_STORAGE_KEY, cleanedKey);
+      setManualApiKeyState(cleanedKey);
     } else {
       clearManualApiKey();
     }

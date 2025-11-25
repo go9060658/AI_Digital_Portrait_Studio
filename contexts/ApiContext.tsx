@@ -46,9 +46,21 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const getGeminiClient = useCallback((): GoogleGenAI | null => {
     const apiKey = apiKeyContext.getApiKey();
     
+    // 確保 API Key 格式正確（移除所有空白字符）
+    const cleanedApiKey = apiKey ? apiKey.trim().replace(/\s+/g, '') : '';
+    
     // 如果有環境變數提供的 API Key，直接使用
-    if (apiKey) {
-      return new GoogleGenAI({ apiKey });
+    if (cleanedApiKey) {
+      // 開發模式下記錄 API Key 前綴（用於除錯）
+      if (import.meta.env.DEV) {
+        console.log('[API] 使用 API Key:', cleanedApiKey.substring(0, 8) + '...');
+      }
+      try {
+        return new GoogleGenAI({ apiKey: cleanedApiKey });
+      } catch (error) {
+        console.error('[API] GoogleGenAI 初始化失敗:', error);
+        throw new Error(`API Key 初始化失敗: ${error instanceof Error ? error.message : '未知錯誤'}`);
+      }
     }
     
     // 如果有擴充功能，擴充功能會自動注入 API Key
@@ -56,7 +68,8 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       try {
         // 擴充功能會自動處理 API Key，傳入空字串即可
         return new GoogleGenAI({ apiKey: '' });
-      } catch {
+      } catch (error) {
+        console.error('[API] 擴充功能初始化失敗:', error);
         return null;
       }
     }

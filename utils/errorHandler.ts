@@ -54,6 +54,16 @@ export function handleError(error: unknown, userMessage?: string): AppError {
         userMessage: userMessage || '認證失敗，請重新登入',
       };
     }
+    // 400 錯誤可能是請求格式問題，不一定是 API Key 問題
+    if (error.status === 400) {
+      return {
+        type: ErrorType.API,
+        message: `請求錯誤: ${error.status}`,
+        originalError: error,
+        retryable: false,
+        userMessage: userMessage || '請求格式錯誤，請檢查輸入內容後重試',
+      };
+    }
   }
 
   // Error 物件
