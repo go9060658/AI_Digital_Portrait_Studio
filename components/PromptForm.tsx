@@ -6,13 +6,16 @@ import {
   LIGHTING_CONDITIONS,
   ASPECT_RATIOS,
   BACKGROUNDS,
+  BACKGROUND_CATEGORIES,
   CLOTHING_SEASONS,
-  POSES,
+  FEMALE_POSES,
+  MALE_POSES,
   MODEL_GENDERS,
 } from "../constants";
 import InputGroup from "./InputGroup";
 import SpinnerIcon from "./icons/SpinnerIcon";
 import RemoveIcon from "./icons/RemoveIcon";
+import BackgroundSelect from "./BackgroundSelect";
 import { useTranslation } from "../contexts/TranslationContext";
 
 interface PromptFormProps {
@@ -162,18 +165,16 @@ const PromptForm: React.FC<PromptFormProps> = React.memo(({
         </div>
 
         <InputGroup label={t.form.background}>
-          <select
-            name="background"
+          <BackgroundSelect
             value={formData.background}
-            onChange={onFormChange}
-            className="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
-          >
-            {BACKGROUNDS.map((bg) => (
-              <option key={bg} value={bg}>
-                {translateOption("background", bg)}
-              </option>
-            ))}
-          </select>
+            onChange={(value) => {
+              const syntheticEvent = {
+                target: { name: 'background', value },
+              } as React.ChangeEvent<HTMLSelectElement>;
+              onFormChange(syntheticEvent);
+            }}
+            name="background"
+          />
         </InputGroup>
 
         <InputGroup label={t.form.additionalDescription}>
@@ -228,7 +229,7 @@ const PromptForm: React.FC<PromptFormProps> = React.memo(({
               onChange={onFormChange}
               className="w-full bg-slate-700 border border-slate-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
             >
-              {POSES.map((pose) => (
+              {(formData.modelGender === "女性模特兒" ? FEMALE_POSES : MALE_POSES).map((pose) => (
                 <option key={pose} value={pose}>
                   {translateOption("pose", pose)}
                 </option>

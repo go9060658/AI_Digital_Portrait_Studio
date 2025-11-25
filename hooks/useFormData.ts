@@ -6,7 +6,8 @@ import {
   MODEL_GENDERS,
   BACKGROUNDS,
   EXPRESSIONS,
-  POSES,
+  FEMALE_POSES,
+  MALE_POSES,
   LIGHTING_CONDITIONS,
   ASPECT_RATIOS,
 } from '../constants';
@@ -25,14 +26,14 @@ interface UseFormDataReturn {
 
 const DEFAULT_FORM_DATA: FormDataState = {
   productName: '登山後背包',
-  clothingStyle: CLOTHING_STYLES[8], // 戶外休閒風
+  clothingStyle: CLOTHING_STYLES[7], // 戶外休閒風
   clothingSeason: CLOTHING_SEASONS[5], // 高山
   modelGender: MODEL_GENDERS[0],
-  background: BACKGROUNDS[11], // 台灣阿里山日出雲海
-  expression: EXPRESSIONS[3], // 自信
-  pose: POSES[0],
-  lighting: LIGHTING_CONDITIONS[0],
-  aspectRatio: ASPECT_RATIOS[0],
+  background: BACKGROUNDS[0], // 台灣阿里山日出雲海
+  expression: EXPRESSIONS[0], // 自信，眼神直視鏡頭
+  pose: FEMALE_POSES[0], // 預設女性姿勢
+  lighting: LIGHTING_CONDITIONS[0], // 光線條件良好的自然光
+  aspectRatio: ASPECT_RATIOS[0], // 9:16
   faceImage: null,
   objectImage: null,
   additionalDescription: '',
