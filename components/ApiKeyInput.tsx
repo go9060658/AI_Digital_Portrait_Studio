@@ -24,7 +24,7 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ onClose, showOnMount = false 
     if (showOnMount && !isApiKeyAvailable()) {
       setIsVisible(true);
     }
-  }, [showOnMount, isApiKeyAvailable]);
+  }, [showOnMount]); // 移除 isApiKeyAvailable，因為它是函數
 
   const handleSave = useCallback(() => {
     setError(null);

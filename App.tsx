@@ -72,7 +72,7 @@ const AppContent: React.FC = () => {
       }, 500);
       return () => clearTimeout(timer);
     }
-  }, [user, initializing, isApiKeyAvailable]);
+  }, [user, initializing]); // 移除 isApiKeyAvailable，因為它是函數
 
   // 處理檔案變更錯誤
   const handleFileChangeWithError = async (e: React.ChangeEvent<HTMLInputElement>) => {

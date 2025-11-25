@@ -1,5 +1,4 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { useTranslation } from '../contexts/TranslationContext';
 
 interface Props {
   children: ReactNode;
@@ -65,8 +64,8 @@ interface ErrorFallbackProps {
 }
 
 const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, onReset }) => {
-  const { t } = useTranslation();
-
+  // 不使用 useTranslation，因為 ErrorBoundary 可能在 TranslationProvider 之外
+  // 直接使用硬編碼的文字，避免依賴問題
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex items-center justify-center p-4">
       <div className="max-w-2xl w-full bg-slate-800 rounded-xl border border-red-500/50 p-6">
@@ -88,7 +87,7 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, onReset }) => {
           </div>
           <div className="flex-grow">
             <h2 className="text-2xl font-bold text-red-400 mb-2">
-              {t.errors.general || '發生錯誤'}
+              發生錯誤
             </h2>
             <p className="text-slate-300 mb-4">
               {error?.message || '應用程式發生未預期的錯誤'}
@@ -122,6 +121,7 @@ export const ErrorBoundary: React.FC<Props> = (props) => {
 };
 
 export default ErrorBoundary;
+
 
 
 
