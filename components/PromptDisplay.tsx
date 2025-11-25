@@ -31,6 +31,54 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
   const [isCopied, setIsCopied] = useState(false);
   const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
 
+  // 從頁面上已顯示的圖片元素讀取（完全繞過 CORS，因為圖片已經在頁面上）
+  const loadImageFromDisplayedElement = useCallback(async (imageSrc: string, index: number): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      // 尋找頁面上對應的圖片元素
+      const imgElements = document.querySelectorAll('img');
+      let targetImg: HTMLImageElement | null = null;
+      
+      const baseUrl = imageSrc.split('?')[0]; // 移除 query string 進行比對
+      
+      for (const img of imgElements) {
+        const imgSrc = img.src.split('?')[0];
+        // 比對 URL
+        if (img.src === imageSrc || imgSrc === baseUrl || img.src.includes(baseUrl) || imageSrc.includes(imgSrc)) {
+          targetImg = img as HTMLImageElement;
+          break;
+        }
+      }
+      
+      if (targetImg && targetImg.complete && targetImg.naturalWidth > 0 && targetImg.naturalHeight > 0) {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = targetImg.naturalWidth;
+          canvas.height = targetImg.naturalHeight;
+          const ctx = canvas.getContext('2d');
+          
+          if (!ctx) {
+            reject(new Error('無法建立 Canvas 上下文'));
+            return;
+          }
+          
+          // 從已顯示的圖片元素繪製到 canvas（不會觸發 CORS，因為圖片已經在頁面上）
+          ctx.drawImage(targetImg, 0, 0);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('無法轉換 Canvas 為 Blob'));
+            }
+          }, 'image/jpeg', 0.95);
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error('無法從頁面讀取圖片'));
+        }
+      } else {
+        reject(new Error('找不到已載入的圖片元素'));
+      }
+    });
+  }, []);
+
   // 透過 Canvas 載入圖片（繞過 CORS）- 必須在 handleDownload 之前定義
   const loadImageViaCanvas = useCallback(async (imageSrc: string): Promise<Blob> => {
     return new Promise((resolve, reject) => {
@@ -92,7 +140,13 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
       } 
       // 處理 Firebase Storage URL（可能有 CORS 問題）
       else if (fileUrl.includes('firebasestorage.googleapis.com')) {
-        blob = await loadImageViaCanvas(fileUrl);
+        // 策略 1：優先從頁面上已顯示的圖片元素讀取（完全繞過 CORS）
+        try {
+          blob = await loadImageFromDisplayedElement(fileUrl, index);
+        } catch (domError) {
+          // 策略 2：如果無法從 DOM 讀取，使用 Canvas 方式
+          blob = await loadImageViaCanvas(fileUrl);
+        }
       }
       // 處理一般 URL
       else {
@@ -129,7 +183,7 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
     } finally {
       setDownloadingIndex(null);
     }
-  }, [loadImageViaCanvas]);
+  }, [loadImageViaCanvas, loadImageFromDisplayedElement]);
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(prompt).then(() => {
