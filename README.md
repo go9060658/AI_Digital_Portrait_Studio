@@ -435,6 +435,13 @@ firebase deploy --only hosting
 - 社群討論與經驗分享
 - 最新功能預覽與測試
 
+## 🔗 推薦同步參考
+
+如果您對 AI 視覺行銷工具感興趣，歡迎同步參考以下相關專案：
+
+- **[AI-PM-Designer-Pro](https://github.com/mkhsu2002/AI-PM-Designer-Pro)** - AI 視覺行銷生產力工具，基於 Google Gemini 2.5 Flash 與 Gemini 3 Pro Image，從產品圖自動生成完整行銷素材包
+- **[EC_SEO_SA](https://github.com/mkhsu2002/EC_SEO_SA)** - 電商 SEO 與內容行銷工具
+
 ## ☕ 請我喝杯咖啡
 
 如果這個專案對您有幫助，歡迎請我喝杯咖啡：
