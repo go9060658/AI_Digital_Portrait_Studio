@@ -16,6 +16,10 @@ import { useVideoGeneration } from './hooks/useVideoGeneration';
 import { useHistory } from './hooks/useHistory';
 import { useQuota } from './hooks/useQuota';
 import { handleError, logError } from './utils/errorHandler';
+import FirebaseErrorDisplay from './components/FirebaseErrorDisplay';
+import { firebaseDiagnostics } from './firebase';
+import FirebaseErrorDisplay from './components/FirebaseErrorDisplay';
+import { firebaseDiagnostics } from './firebase';
 
 // 程式碼分割：延遲載入主要組件
 const PromptForm = lazy(() => import('./components/PromptForm'));
@@ -160,6 +164,20 @@ const AppContent: React.FC = () => {
       setError(appError.userMessage || appError.message);
     }
   };
+
+  // 檢查 Firebase 初始化狀態
+  if (firebaseDiagnostics.hasInitializationError || firebaseDiagnostics.missingVars.length > 0) {
+    return (
+      <FirebaseErrorDisplay
+        missingVars={firebaseDiagnostics.missingVars}
+        initializationError={
+          firebaseDiagnostics.hasInitializationError
+            ? new Error('Firebase 初始化失敗，請檢查環境變數設定')
+            : null
+        }
+      />
+    );
+  }
 
   if (initializing) {
     return (

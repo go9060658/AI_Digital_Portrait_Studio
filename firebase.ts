@@ -118,3 +118,10 @@ export const auth = authInstance;
 export const db = dbInstance;
 export const storage = storageInstance;
 
+// 導出診斷資訊
+export const firebaseDiagnostics = {
+  isInitialized: authInstance !== null && dbInstance !== null,
+  missingVars,
+  hasInitializationError: authInstance === null || dbInstance === null,
+};
+
