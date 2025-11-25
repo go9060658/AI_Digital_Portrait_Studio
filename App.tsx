@@ -137,9 +137,10 @@ const AppContent: React.FC = () => {
       // 儲存歷史紀錄
       await history.saveHistoryRecord(formData, storedImages);
     } catch (err) {
-      const appError = handleError(err, t.errors.general);
+      const appError = handleError(err);
       logError(appError, 'Generate Images');
-      const errorMessage = appError.userMessage || appError.message;
+      // 使用更具體的錯誤訊息，如果沒有則使用通用訊息
+      const errorMessage = appError.userMessage || appError.message || t.errors.general;
       setError(errorMessage);
       setShowErrorToast(true);
     }

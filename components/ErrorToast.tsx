@@ -53,14 +53,24 @@ const ErrorToast: React.FC<ErrorToastProps> = ({
           <h3 className="text-sm font-semibold text-red-200 mb-1">
             {t.promptDisplay.errorTitle || '發生錯誤'}
           </h3>
-          <p className="text-sm text-red-100 break-words">{message}</p>
+          <p className="text-sm text-red-100 break-words whitespace-pre-wrap">{message}</p>
           {onRetry && (
             <button
               onClick={onRetry}
-              className="mt-3 text-xs font-semibold text-red-200 hover:text-white underline"
+              className="mt-3 text-xs font-semibold text-red-200 hover:text-white underline transition-colors"
             >
               重試
             </button>
+          )}
+          {import.meta.env.DEV && (
+            <details className="mt-2">
+              <summary className="text-xs text-red-300 cursor-pointer hover:text-red-100">
+                開發模式：顯示詳細錯誤
+              </summary>
+              <pre className="mt-2 text-xs text-red-200 bg-red-950/50 p-2 rounded overflow-auto max-h-32">
+                {JSON.stringify(message, null, 2)}
+              </pre>
+            </details>
           )}
         </div>
         <button

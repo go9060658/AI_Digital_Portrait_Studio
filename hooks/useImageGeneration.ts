@@ -40,9 +40,11 @@ export const useImageGeneration = (): UseImageGenerationReturn => {
         setImages(generatedImages);
         return generatedImages;
       } catch (err) {
-        const appError = handleError(err, t.errors.general);
+        const appError = handleError(err);
         logError(appError, 'Image Generation');
-        setError(appError.userMessage || appError.message);
+        // 使用更具體的錯誤訊息，如果沒有則使用通用訊息
+        const errorMessage = appError.userMessage || appError.message || t.errors.general;
+        setError(errorMessage);
         throw err;
       } finally {
         setIsLoading(false);

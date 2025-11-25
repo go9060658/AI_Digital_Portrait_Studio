@@ -90,15 +90,36 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
             <h3 className="text-xl font-semibold text-red-400 mb-2">
               {t.promptDisplay.errorTitle}
             </h3>
-            <p className="text-sm text-slate-300 bg-red-900/30 border border-red-800/50 p-4 rounded-lg mb-4">
+            <p className="text-sm text-slate-300 bg-red-900/30 border border-red-800/50 p-4 rounded-lg mb-4 whitespace-pre-wrap break-words">
               {error}
             </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
-            >
-              重新載入頁面
-            </button>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => {
+                  setError(null);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+              >
+                關閉
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+              >
+                重新載入頁面
+              </button>
+            </div>
+            {import.meta.env.DEV && (
+              <details className="mt-4">
+                <summary className="text-xs text-slate-400 cursor-pointer hover:text-slate-200">
+                  開發模式：顯示詳細錯誤
+                </summary>
+                <pre className="mt-2 text-xs text-slate-300 bg-slate-900 p-3 rounded overflow-auto max-h-40">
+                  {error}
+                </pre>
+              </details>
+            )}
           </div>
         </div>
       );

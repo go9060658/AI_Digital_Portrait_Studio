@@ -59,20 +59,82 @@ export function handleError(error: unknown, userMessage?: string): AppError {
   // Error 物件
   if (error instanceof Error) {
     const errorMessage = error.message.toLowerCase();
+    const originalMessage = error.message;
+
+    // Gemini API 安全過濾錯誤
+    if (
+      errorMessage.includes('safety') ||
+      errorMessage.includes('blocked') ||
+      errorMessage.includes('blockreason') ||
+      errorMessage.includes('content was blocked')
+    ) {
+      return {
+        type: ErrorType.API,
+        message: originalMessage,
+        originalError: error,
+        retryable: false,
+        userMessage: userMessage || '內容被安全過濾系統阻擋，請調整提示詞後重試',
+      };
+    }
+
+    // API Key 相關錯誤
+    if (
+      errorMessage.includes('api key') ||
+      errorMessage.includes('invalid api key') ||
+      errorMessage.includes('authentication') ||
+      errorMessage.includes('unauthorized')
+    ) {
+      return {
+        type: ErrorType.AUTH,
+        message: originalMessage,
+        originalError: error,
+        retryable: false,
+        userMessage: userMessage || 'API Key 無效或已過期，請檢查 API Key 設定',
+      };
+    }
+
+    // 配額/限制相關錯誤
+    if (
+      errorMessage.includes('quota') ||
+      errorMessage.includes('rate limit') ||
+      errorMessage.includes('too many requests') ||
+      errorMessage.includes('resource exhausted')
+    ) {
+      return {
+        type: ErrorType.QUOTA,
+        message: originalMessage,
+        originalError: error,
+        retryable: true,
+        userMessage: userMessage || 'API 配額已用完或達到速率限制，請稍後再試',
+      };
+    }
 
     // API 相關錯誤
     if (
       errorMessage.includes('api') ||
       errorMessage.includes('gemini') ||
       errorMessage.includes('veo') ||
-      errorMessage.includes('request failed')
+      errorMessage.includes('request failed') ||
+      errorMessage.includes('failed to download') ||
+      errorMessage.includes('api did not return') ||
+      errorMessage.includes('insufficient images')
     ) {
+      // 嘗試提取更具體的錯誤訊息
+      let specificMessage = 'API 呼叫失敗，請稍後再試';
+      if (originalMessage.includes('download')) {
+        specificMessage = '圖片下載失敗，請檢查網路連線後重試';
+      } else if (originalMessage.includes('did not return')) {
+        specificMessage = 'API 未返回圖片內容，可能是提示詞不符合規範，請調整後重試';
+      } else if (originalMessage.includes('Insufficient')) {
+        specificMessage = '生成的圖片數量不足，請重試';
+      }
+
       return {
         type: ErrorType.API,
-        message: error.message,
+        message: originalMessage,
         originalError: error,
         retryable: true,
-        userMessage: userMessage || 'API 呼叫失敗，請稍後再試',
+        userMessage: userMessage || specificMessage,
       };
     }
 
@@ -138,23 +200,28 @@ export function handleError(error: unknown, userMessage?: string): AppError {
       };
     }
 
-    // 其他 Error
+    // 其他 Error - 嘗試顯示原始錯誤訊息
     return {
       type: ErrorType.UNKNOWN,
       message: error.message,
       originalError: error,
       retryable: false,
-      userMessage: userMessage || error.message,
+      userMessage: userMessage || (error.message.length > 100 ? '發生錯誤，請檢查設定後重試' : error.message),
     };
   }
 
-  // 未知錯誤
+  // 未知錯誤類型 - 在開發模式下顯示更多資訊
+  const errorString = String(error);
+  const errorInfo = import.meta.env.DEV 
+    ? `（開發模式：${errorString.substring(0, 200)}）`
+    : '';
+
   return {
     type: ErrorType.UNKNOWN,
     message: '發生未知錯誤',
     originalError: error,
     retryable: false,
-    userMessage: userMessage || '發生未知錯誤，請稍後再試',
+    userMessage: userMessage || `發生未知錯誤，請稍後再試${errorInfo}`,
   };
 }
 
