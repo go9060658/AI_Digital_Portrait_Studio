@@ -26,10 +26,6 @@
 - ✅ **UI/UX 優化**：重新設計 API Key 設定彈出視窗，加入鍵盤快捷鍵支援（Ctrl+Enter / Cmd+Enter）
 - ✅ **圖片下載簡化**：移除複雜的下載按鈕，改為引導用戶使用瀏覽器右鍵下載，完全繞過 CORS 限制
 - ✅ **錯誤診斷改進**：改進 API Key 處理和錯誤診斷，確保格式正確
-- ✅ **移除使用額度限制**：使用者可使用自己的 API Key 無限制生成
-- ✅ **移除影片生成功能**：簡化應用功能，專注於圖片生成
-
-**詳細變更記錄**：請參考 [CHANGELOG_v3.5.md](./CHANGELOG_v3.5.md)
 
 ## 核心功能
 
@@ -424,8 +420,6 @@ firebase deploy --only hosting
 - [SECURITY.md](./SECURITY.md) - 安全部署指南
 - [API_KEY_CONTEXT_REFACTOR.md](./API_KEY_CONTEXT_REFACTOR.md) - API Key 統一管理說明（v3.5）
 - [cloudflare-pages-setup.md](./cloudflare-pages-setup.md) - Cloudflare Pages 詳細設定指南
-- [CHANGELOG_v3.5.md](./CHANGELOG_v3.5.md) - v3.5 版本改動總結
-- [MERGE_SUMMARY_v3.5.md](./MERGE_SUMMARY_v3.5.md) - v3.5 合併總結
 
 > ⚠️ **安全提醒**：部署到公開平台時，API Key 會暴露在前端程式碼中。建議使用 Firebase Cloud Functions 作為 API 代理，詳見 [SECURITY.md](./SECURITY.md)。
 
