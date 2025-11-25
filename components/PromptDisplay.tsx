@@ -96,12 +96,11 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
             <div className="flex gap-3 justify-center">
               <button
                 onClick={() => {
-                  setError(null);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
               >
-                關閉
+                返回表單
               </button>
               <button
                 onClick={() => window.location.reload()}
