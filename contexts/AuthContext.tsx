@@ -10,6 +10,11 @@ import {
 } from "firebase/auth";
 import { auth } from "../firebase";
 
+// 檢查 Firebase 是否正確初始化
+if (!auth) {
+  console.error('❌ Firebase Auth 未正確初始化，請檢查環境變數設定');
+}
+
 interface AuthContextValue {
   user: User | null;
   initializing: boolean;
