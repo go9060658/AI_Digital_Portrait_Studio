@@ -172,6 +172,12 @@ const AppContent: React.FC = () => {
     }
   };
 
+  // 鍵盤快捷鍵支援（放在 handleGenerate 定義之後）
+  useKeyboardShortcuts({
+    'ctrl+enter': handleGenerate,
+    'meta+enter': handleGenerate,
+  });
+
   // 檢查 Firebase 初始化狀態
   if (firebaseDiagnostics.hasInitializationError || firebaseDiagnostics.missingVars.length > 0) {
     return (
