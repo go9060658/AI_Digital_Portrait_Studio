@@ -24,9 +24,10 @@
 - ✅ **API Key 統一管理**：使用 `ApiKeyContext` 統一管理 API Key，支援環境變數與瀏覽器擴充功能
 - ✅ **Firebase 錯誤處理改善**：加入環境變數驗證和詳細錯誤訊息
 - ✅ **UI/UX 優化**：重新設計 API Key 設定彈出視窗，加入鍵盤快捷鍵支援（Ctrl+Enter / Cmd+Enter）
-- ✅ **圖片下載修復**：修復 Firebase Storage 圖片下載的 CORS 問題
+- ✅ **圖片下載簡化**：移除複雜的下載按鈕，改為引導用戶使用瀏覽器右鍵下載，完全繞過 CORS 限制
 - ✅ **錯誤診斷改進**：改進 API Key 處理和錯誤診斷，確保格式正確
 - ✅ **移除使用額度限制**：使用者可使用自己的 API Key 無限制生成
+- ✅ **移除影片生成功能**：簡化應用功能，專注於圖片生成
 
 **詳細變更記錄**：請參考 [CHANGELOG_v3.5.md](./CHANGELOG_v3.5.md)
 
@@ -35,15 +36,15 @@
 - **多視角影像生成**：一次產出全身、半身、特寫三張圖，並自動套用選定的長寬比。
 - **可選參考素材**：支援上傳人物臉孔與商品物件，強化生成一致性。
 - **歷史紀錄與還原**：每位登入使用者可保留最近 5 筆生成紀錄，一鍵載入設定。
-- **動態影像延伸**：可將任一張圖轉交 Gemini Veo 產生 720p 動態影像。
-- **完善帳號體驗**：Firebase Authentication 提供註冊、登入、忘記密碼流程，同時顯示剩餘生成次數。
+- **圖片下載**：透過瀏覽器右鍵選單即可下載圖片，完全繞過 CORS 限制。
+- **完善帳號體驗**：Firebase Authentication 提供註冊、登入、忘記密碼流程。
 
 ## 技術概覽
 
 - React 19、TypeScript、Vite 6
 - Firebase Authentication、Firestore、Storage
-- Google Gemini `gemini-2.5-flash-image` / Veo `veo-3.1-fast-generate-preview`
-- Tailwind 風格的原子化樣式（以 `className` 直接撰寫）
+- Google Gemini `gemini-2.5-flash-image` 影像生成模型
+- Tailwind CSS 原子化樣式（以 `className` 直接撰寫）
 
 ## 本地部署流程
 
@@ -59,7 +60,7 @@
 3. **設定環境變數**（於專案根目錄建立 `.env.local`）
    ```dotenv
    # Gemini API Key（可選，但不建議，可待部署完成後，直接於登入後首頁上手動輸入 Gemini API Key，將API Key 儲存於本地，可降低外洩風險）
-   VITE_API_KEY=你的_GEMINI_OR_VEO_API_KEY
+   VITE_API_KEY=你的_GEMINI_API_KEY
    
    # Firebase 設定（必要）
    VITE_FIREBASE_API_KEY=你的_FIREBASE_API_KEY
@@ -227,7 +228,7 @@
    - 選擇 **Pages** → **Create a project**
    - 選擇 **Connect to Git**
    - 連結您的 GitHub 倉庫
-   - 選擇 `main` 分支（或 `dev3.5` 分支）
+   - 選擇 `main` 分支
 
 2. **設定建置設定**
    
@@ -272,7 +273,7 @@
    **詳細設定步驟**請參考：[CLOUDFLARE_ENV_SETUP.md](./CLOUDFLARE_ENV_SETUP.md)
 
 4. **分支控制**
-   - **生產分支**：`main`（或 `dev3.5`）
+   - **生產分支**：`main`
    - **自動部署**：已啟用 ✅
    - 每次推送程式碼到生產分支時，Cloudflare 會自動觸發建置和部署
 
