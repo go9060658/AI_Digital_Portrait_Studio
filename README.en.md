@@ -10,7 +10,7 @@ AI Digital Portrait Studio is a React + Vite web application that integrates Goo
 
 No deployment needed! Click the link below and enter your own Gemini API Key (with billing and proper permissions enabled) to start using immediately:
 
-👉 **[https://portrait.icareu.tw/](https://portrait.icareu.tw/)**
+👉 <a href="https://portrait.icareu.tw/" target="_blank" rel="noopener noreferrer">https://portrait.icareu.tw/</a>
 
 If you want to deploy it yourself, please refer to the GitHub/Cloudflare Pages deployment guide below!
 
@@ -49,7 +49,7 @@ If you want to deploy it yourself, please refer to the GitHub/Cloudflare Pages d
 
 1. **Get the code**
    ```bash
-   git clone https://github.com/mkhsu2002/AI_Digital_Portrait_Studio.git
+   git clone <a href="https://github.com/mkhsu2002/AI_Digital_Portrait_Studio.git" target="_blank" rel="noopener noreferrer">https://github.com/mkhsu2002/AI_Digital_Portrait_Studio.git</a>
    cd AI_Digital_Portrait_Studio
    ```
 2. **Install dependencies**
@@ -223,7 +223,7 @@ The project has GitHub Actions automated deployment workflows configured. When y
 **Setup Steps**:
 
 1. **Create a project in Cloudflare**
-   - Go to [Cloudflare Dashboard](https://dash.cloudflare.com)
+   - Go to <a href="https://dash.cloudflare.com" target="_blank" rel="noopener noreferrer">Cloudflare Dashboard</a>
    - Select **Pages** → **Create a project**
    - Choose **Connect to Git**
    - Link your GitHub repository
@@ -304,7 +304,7 @@ The project has GitHub Actions automated deployment workflows configured. When y
 - ✅ Best environment variable management interface
 
 **Setup Steps**:
-1. Go to [Vercel](https://vercel.com) and register, link GitHub
+1. Go to <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">Vercel</a> and register, link GitHub
 2. Click **New Project** → Select your repository
 3. Set all environment variables in **Environment Variables**
 4. Click **Deploy**
@@ -391,7 +391,7 @@ This project uses Firebase to provide the following services:
 
 **Get Firebase Configuration Parameters**:
 
-1. Go to [Firebase Console](https://console.firebase.google.com/)
+1. Go to <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer">Firebase Console</a>
 2. Select or create a project
 3. Go to **Project Settings** (⚙️) → **General** tab
 4. Scroll to **Your apps** section
@@ -412,7 +412,7 @@ This project uses Firebase to provide the following services:
 - **Firestore Database**: Create database (recommended to use test mode first, then set security rules)
 - **Storage**: Enable Storage, set security rules to allow authenticated users to upload/read
 
-For detailed setup, please refer to [Firebase Official Documentation](https://firebase.google.com/docs/web/setup)
+For detailed setup, please refer to <a href="https://firebase.google.com/docs/web/setup" target="_blank" rel="noopener noreferrer">Firebase Official Documentation</a>
 
 ---
 
@@ -432,7 +432,7 @@ For detailed setup, please refer to [Firebase Official Documentation](https://fi
 
 If you have any questions, suggestions, or need technical support, welcome to join the FlyPig LINE group:
 
-👉 **[Join FlyPig LINE Group](https://line.me/R/ti/g/@icareuec)**
+👉 <a href="https://line.me/R/ti/g/@icareuec" target="_blank" rel="noopener noreferrer">Join FlyPig LINE Group</a>
 
 We provide:
 - Technical support and Q&A
@@ -444,7 +444,7 @@ We provide:
 
 If this project is helpful to you, welcome to buy me a coffee:
 
-👉 **[Buy me a coffee](https://buymeacoffee.com/mkhsu2002w)**
+👉 <a href="https://buymeacoffee.com/mkhsu2002w" target="_blank" rel="noopener noreferrer">Buy me a coffee</a>
 
 Your support is the motivation for my continued development!
 
@@ -455,6 +455,6 @@ Email: flypig@icareu.tw / LINE ID: icareuec
 
 This project is licensed under the **MIT License**. You are free to use, modify, and self-host.
 
-**Open sourced by [FlyPig AI](https://flypigai.icareu.tw/)**
+**Open sourced by <a href="https://flypigai.icareu.tw/" target="_blank" rel="noopener noreferrer">FlyPig AI</a>**
 
 For full license text, see: [LICENSE](./LICENSE)

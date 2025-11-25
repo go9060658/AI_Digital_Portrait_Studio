@@ -10,7 +10,7 @@
 
 免部署，點擊下方連結填入您自己的，已正確開啟付費及授權的 Gemini API Key，即可立即體驗：
 
-👉 **[https://portrait.icareu.tw/](https://portrait.icareu.tw/)**
+👉 <a href="https://portrait.icareu.tw/" target="_blank" rel="noopener noreferrer">https://portrait.icareu.tw/</a>
 
 若希望自行部署，請參考下方 GitHub/Cloudflare Pages 的部署指南！
 
@@ -49,7 +49,7 @@
 
 1. **取得程式碼**
    ```bash
-   git clone https://github.com/mkhsu2002/AI_Digital_Portrait_Studio.git
+   git clone <a href="https://github.com/mkhsu2002/AI_Digital_Portrait_Studio.git" target="_blank" rel="noopener noreferrer">https://github.com/mkhsu2002/AI_Digital_Portrait_Studio.git</a>
    cd AI_Digital_Portrait_Studio
    ```
 2. **安裝依賴**
@@ -223,7 +223,7 @@
 **設定步驟**：
 
 1. **在 Cloudflare 建立專案**
-   - 前往 [Cloudflare Dashboard](https://dash.cloudflare.com)
+   - 前往 <a href="https://dash.cloudflare.com" target="_blank" rel="noopener noreferrer">Cloudflare Dashboard</a>
    - 選擇 **Pages** → **Create a project**
    - 選擇 **Connect to Git**
    - 連結您的 GitHub 倉庫
@@ -304,7 +304,7 @@
 - ✅ 環境變數管理介面最佳
 
 **設定步驟**：
-1. 前往 [Vercel](https://vercel.com) 註冊並連結 GitHub
+1. 前往 <a href="https://vercel.com" target="_blank" rel="noopener noreferrer">Vercel</a> 註冊並連結 GitHub
 2. 點擊 **New Project** → 選擇您的倉庫
 3. 在 **Environment Variables** 中設定所有環境變數
 4. 點擊 **Deploy**
@@ -391,7 +391,7 @@ firebase deploy --only hosting
 
 **取得 Firebase 設定參數**：
 
-1. 前往 [Firebase Console](https://console.firebase.google.com/)
+1. 前往 <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer">Firebase Console</a>
 2. 選擇或建立專案
 3. 前往 **專案設定**（⚙️） → **一般** 標籤
 4. 滾動到 **您的應用程式** 區塊
@@ -412,7 +412,7 @@ firebase deploy --only hosting
 - **Firestore Database**：建立資料庫（建議使用測試模式，然後設定安全規則）
 - **Storage**：啟用 Storage，設定安全規則允許已認證使用者上傳/讀取
 
-詳細設定請參考 [Firebase 官方文檔](https://firebase.google.com/docs/web/setup)
+詳細設定請參考 <a href="https://firebase.google.com/docs/web/setup" target="_blank" rel="noopener noreferrer">Firebase 官方文檔</a>
 
 ---
 
@@ -432,7 +432,7 @@ firebase deploy --only hosting
 
 如有任何問題、建議或需要技術支援，歡迎加入 FlyPig 專屬 LINE 群組：
 
-👉 **[加入 FlyPig LINE 群組](https://line.me/R/ti/g/@icareuec)**
+👉 <a href="https://line.me/R/ti/g/@icareuec" target="_blank" rel="noopener noreferrer">加入 FlyPig LINE 群組</a>
 
 我們會在這裡提供：
 - 技術支援與問題解答
@@ -444,7 +444,7 @@ firebase deploy --only hosting
 
 如果這個專案對您有幫助，歡迎請我喝杯咖啡：
 
-👉 **[Buy me a coffee](https://buymeacoffee.com/mkhsu2002w)**
+👉 <a href="https://buymeacoffee.com/mkhsu2002w" target="_blank" rel="noopener noreferrer">Buy me a coffee</a>
 
 您的支持是我持續開發的動力！
 
@@ -455,6 +455,6 @@ Email: flypig@icareu.tw  / LINE ID: icareuec
 
 本專案採用 **MIT 授權**。您可以自由使用、修改與自建部署。
 
-**Open sourced by [FlyPig AI](https://flypigai.icareu.tw/)**
+**Open sourced by <a href="https://flypigai.icareu.tw/" target="_blank" rel="noopener noreferrer">FlyPig AI</a>**
 
 詳見授權全文：[LICENSE](./LICENSE)
