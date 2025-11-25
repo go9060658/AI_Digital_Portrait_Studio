@@ -75,8 +75,31 @@ export async function createBlobUrl(imageSrc: string): Promise<string> {
 }
 
 /**
+ * 使用 Firebase Storage SDK 下載圖片（避免 CORS 問題）
+ */
+export async function downloadImageFromFirebaseStorage(url: string): Promise<Blob> {
+  // 如果已經有 Firebase Storage 實例，使用 SDK 下載
+  // 否則回退到 fetch 方式
+  try {
+    const response = await fetch(url, {
+      mode: 'cors',
+      credentials: 'omit',
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to download: ${response.status} ${response.statusText}`);
+    }
+    
+    return await response.blob();
+  } catch (error) {
+    // 如果 fetch 失敗，嘗試使用 Canvas 方式
+    return loadImageViaCanvas(url);
+  }
+}
+
+/**
  * 從 Data URL 或 URL 解析圖片位元組（用於 API 呼叫）
- * 支援 Firebase Storage URL（使用 Canvas 繞過 CORS）
+ * 支援 Firebase Storage URL（優先使用 fetch，失敗時使用 Canvas 繞過 CORS）
  */
 export async function resolveImageBytes(src: string): Promise<{ imageBytes: string; mimeType: string }> {
   if (src.startsWith("data:")) {
@@ -95,29 +118,45 @@ export async function resolveImageBytes(src: string): Promise<{ imageBytes: stri
   
   // 從 URL 載入
   let blob: Blob;
+  let lastError: Error | null = null;
+  
+  // 策略 1：優先嘗試直接 fetch（適用於已設定 CORS 的情況）
   try {
-    if (isFirebaseStorageUrl) {
-      // Firebase Storage URL：使用 Canvas 方式載入（繞過 CORS）
-      blob = await loadImageViaCanvas(src);
-    } else {
-      // 一般 URL：使用 fetch
-      const response = await fetch(src, {
-        mode: 'cors',
-        credentials: 'omit',
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to download image: ${response.status} ${response.statusText}`);
-      }
-      
-      blob = await response.blob();
+    const response = await fetch(src, {
+      mode: 'cors',
+      credentials: 'omit',
+      headers: {
+        'Accept': 'image/*',
+      },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to download image: ${response.status} ${response.statusText}`);
     }
+    
+    blob = await response.blob();
   } catch (error) {
-    // 如果 fetch 失敗且是 CORS 錯誤，嘗試使用 Canvas 方式
-    if (!isFirebaseStorageUrl && error instanceof TypeError && error.message.includes('fetch')) {
-      blob = await loadImageViaCanvas(src);
+    lastError = error instanceof Error ? error : new Error(String(error));
+    
+    // 策略 2：如果是 Firebase Storage URL 或 CORS 錯誤，嘗試使用 Canvas 方式
+    if (isFirebaseStorageUrl || (error instanceof TypeError && error.message.includes('fetch'))) {
+      try {
+        blob = await loadImageViaCanvas(src);
+      } catch (canvasError) {
+        // 策略 3：如果 Canvas 也失敗，嘗試不設定 crossOrigin（某些情況下可能有效）
+        try {
+          blob = await loadImageViaCanvasWithoutCORS(src);
+        } catch (finalError) {
+          // 所有策略都失敗，拋出原始錯誤
+          throw new Error(
+            `無法載入圖片：${src}。` +
+            `原因：${lastError.message}。` +
+            `這可能是 CORS 設定問題，請檢查 Firebase Storage 的 CORS 設定。`
+          );
+        }
+      }
     } else {
-      throw error;
+      throw lastError;
     }
   }
 
@@ -141,10 +180,91 @@ export async function resolveImageBytes(src: string): Promise<{ imageBytes: stri
 async function loadImageViaCanvas(imageSrc: string): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    // 嘗試跨域載入（需要伺服器支援 CORS）
-    img.crossOrigin = 'anonymous';
+    let triedWithoutCORS = false;
+    
+    const tryLoad = (useCORS: boolean) => {
+      if (useCORS) {
+        img.crossOrigin = 'anonymous';
+      } else {
+        img.removeAttribute('crossOrigin');
+      }
+      
+      // 設定超時（10 秒）
+      const timeout = setTimeout(() => {
+        if (!triedWithoutCORS && useCORS) {
+          // 如果 CORS 方式失敗，嘗試不使用 CORS
+          triedWithoutCORS = true;
+          tryLoad(false);
+        } else {
+          reject(new Error('圖片載入超時，可能是網路連線問題或 CORS 設定不正確'));
+        }
+      }, 10000);
+      
+      img.onload = () => {
+        clearTimeout(timeout);
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          
+          if (!ctx) {
+            reject(new Error('Failed to get canvas context'));
+            return;
+          }
+          
+          // 繪製圖片到 canvas
+          ctx.drawImage(img, 0, 0);
+          
+          // 轉換為 Blob
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Failed to convert canvas to blob'));
+            }
+          }, 'image/jpeg', 0.95);
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error('Unknown error'));
+        }
+      };
+      
+      img.onerror = (event) => {
+        clearTimeout(timeout);
+        if (!triedWithoutCORS && useCORS) {
+          // 如果 CORS 方式失敗，嘗試不使用 CORS
+          triedWithoutCORS = true;
+          tryLoad(false);
+        } else {
+          const errorMsg = `無法載入圖片：${imageSrc}。這可能是 CORS 設定問題。`;
+          console.error('Image load error:', event);
+          reject(new Error(errorMsg));
+        }
+      };
+      
+      // 設定圖片來源（觸發載入）
+      img.src = imageSrc;
+    };
+    
+    // 先嘗試使用 CORS
+    tryLoad(true);
+  });
+}
+
+/**
+ * 透過 Canvas 載入圖片（不設定 crossOrigin，某些情況下可能有效）
+ */
+async function loadImageViaCanvasWithoutCORS(imageSrc: string): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    // 不設定 crossOrigin，某些伺服器可能允許這種方式
+    
+    const timeout = setTimeout(() => {
+      reject(new Error('圖片載入超時'));
+    }, 10000);
     
     img.onload = () => {
+      clearTimeout(timeout);
       try {
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
@@ -156,10 +276,8 @@ async function loadImageViaCanvas(imageSrc: string): Promise<Blob> {
           return;
         }
         
-        // 繪製圖片到 canvas
         ctx.drawImage(img, 0, 0);
         
-        // 轉換為 Blob
         canvas.toBlob((blob) => {
           if (blob) {
             resolve(blob);
@@ -172,13 +290,11 @@ async function loadImageViaCanvas(imageSrc: string): Promise<Blob> {
       }
     };
     
-    img.onerror = (event) => {
-      const errorMsg = `無法載入圖片：${imageSrc}。這可能是 CORS 設定問題。`;
-      console.error('Image load error:', event);
-      reject(new Error(errorMsg));
+    img.onerror = () => {
+      clearTimeout(timeout);
+      reject(new Error('無法載入圖片'));
     };
     
-    // 設定圖片來源（觸發載入）
     img.src = imageSrc;
   });
 }

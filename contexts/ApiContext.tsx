@@ -77,7 +77,7 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return null;
   }, [apiKeyContext]);
   
-  // 下載資源（統一處理，支援取消）
+  // 下載資源（統一處理，支援取消，包含重試機制）
   const downloadResource = useCallback(async (url: string, signal?: AbortSignal): Promise<Blob> => {
     const apiKey = apiKeyContext.getApiKey();
     // 如果 URL 需要 API Key，自動附加
@@ -85,11 +85,34 @@ export const ApiProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       ? `${url}&key=${apiKey}` 
       : `${url}?key=${apiKey}`;
     
-    const response = await fetch(finalUrl, { signal });
-    if (!response.ok) {
-      throw new Error(`Failed to download resource: ${response.status} ${response.statusText}`);
-    }
-    return response.blob();
+    // 使用重試機制下載資源
+    return retry(
+      async () => {
+        if (signal?.aborted) {
+          throw new Error('Request cancelled');
+        }
+        
+        const response = await fetch(finalUrl, { 
+          signal,
+          mode: 'cors',
+          credentials: 'omit',
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to download resource: ${response.status} ${response.statusText}`);
+        }
+        
+        return response.blob();
+      },
+      {
+        maxRetries: 3,
+        initialDelay: 1000,
+        retryable: (error) => {
+          if (signal?.aborted) return false;
+          return isRetryableError(error);
+        },
+      }
+    );
   }, [apiKeyContext]);
   
   
