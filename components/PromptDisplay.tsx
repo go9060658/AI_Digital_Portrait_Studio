@@ -83,7 +83,7 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
   }, []);
 
   // 透過 Canvas 載入圖片（繞過 CORS）
-  const loadImageViaCanvas = useCallback((imageSrc: string): Promise<Blob> => {
+  const loadImageViaCanvas = useCallback(async (imageSrc: string): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
