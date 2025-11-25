@@ -29,22 +29,96 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
   const supportedVideoRatios = ["16:9", "9:16"];
   const isVideoGenerationSupported = supportedVideoRatios.includes(aspectRatio);
   const [isCopied, setIsCopied] = useState(false);
+  const [downloadingIndex, setDownloadingIndex] = useState<number | null>(null);
 
-  const handleDownload = useCallback(async (fileUrl: string, filename: string) => {
+  const handleDownload = useCallback(async (fileUrl: string, filename: string, index: number) => {
+    setDownloadingIndex(index);
     try {
-      const response = await fetch(fileUrl);
-      const blob = await response.blob();
+      let blob: Blob;
+
+      // 處理 data URL
+      if (fileUrl.startsWith("data:")) {
+        const response = await fetch(fileUrl);
+        blob = await response.blob();
+      } 
+      // 處理 Firebase Storage URL（可能有 CORS 問題）
+      else if (fileUrl.includes('firebasestorage.googleapis.com')) {
+        blob = await loadImageViaCanvas(fileUrl);
+      }
+      // 處理一般 URL
+      else {
+        const response = await fetch(fileUrl, {
+          mode: 'cors',
+          credentials: 'omit',
+        });
+        
+        if (!response.ok) {
+          throw new Error(`下載失敗: ${response.status} ${response.statusText}`);
+        }
+        
+        blob = await response.blob();
+      }
+
+      // 建立下載連結
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
       link.download = filename;
+      link.style.display = 'none';
       document.body.appendChild(link);
       link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
+      
+      // 清理
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 100);
     } catch (err) {
       console.error("Failed to download file:", err);
+      const errorMessage = err instanceof Error ? err.message : '下載失敗，請稍後再試';
+      alert(`下載失敗：${errorMessage}`);
+    } finally {
+      setDownloadingIndex(null);
     }
+  }, []);
+
+  // 透過 Canvas 載入圖片（繞過 CORS）
+  const loadImageViaCanvas = useCallback((imageSrc: string): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          
+          if (!ctx) {
+            reject(new Error('無法建立 Canvas 上下文'));
+            return;
+          }
+          
+          ctx.drawImage(img, 0, 0);
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('無法轉換 Canvas 為 Blob'));
+            }
+          }, 'image/jpeg', 0.95);
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error('未知錯誤'));
+        }
+      };
+      
+      img.onerror = () => {
+        reject(new Error('圖片載入失敗，可能是 CORS 設定問題'));
+      };
+      
+      img.src = imageSrc;
+    });
   }, []);
 
   const handleCopy = useCallback(() => {
@@ -189,13 +263,23 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
                     </p>
                   )}
                   <button
-                    onClick={() => handleDownload(image.videoSrc || image.src, filename)}
-                    className="w-full flex justify-center items-center gap-2 bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-slate-500"
+                    onClick={() => handleDownload(image.videoSrc || image.src, filename, index)}
+                    disabled={downloadingIndex === index}
+                    className="w-full flex justify-center items-center gap-2 bg-slate-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-slate-500 disabled:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    <DownloadIcon className="w-5 h-5" />
-                    {image.videoSrc
-                      ? t.promptDisplay.downloadVideoLabel(shotLabel)
-                      : t.promptDisplay.downloadImageLabel(shotLabel)}
+                    {downloadingIndex === index ? (
+                      <>
+                        <SpinnerIcon className="w-5 h-5 animate-spin" />
+                        <span>下載中...</span>
+                      </>
+                    ) : (
+                      <>
+                        <DownloadIcon className="w-5 h-5" />
+                        {image.videoSrc
+                          ? t.promptDisplay.downloadVideoLabel(shotLabel)
+                          : t.promptDisplay.downloadImageLabel(shotLabel)}
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
