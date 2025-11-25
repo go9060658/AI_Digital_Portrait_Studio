@@ -4,11 +4,10 @@ import { useTranslation } from '../contexts/TranslationContext';
 import ApiKeyInput from './ApiKeyInput';
 
 interface HeaderProps {
-  remainingCredits: number | null;
-  isQuotaLoading: boolean;
+  // v3.5: 已移除使用額度限制，不再需要顯示剩餘額度
 }
 
-const Header: React.FC<HeaderProps> = ({ remainingCredits, isQuotaLoading }) => {
+const Header: React.FC<HeaderProps> = () => {
   const { user, logout } = useAuth();
   const { t, toggleLanguage } = useTranslation();
 
@@ -35,9 +34,6 @@ const Header: React.FC<HeaderProps> = ({ remainingCredits, isQuotaLoading }) => 
             <div className="self-center sm:self-auto bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-200 flex flex-col sm:flex-row gap-2 sm:items-center">
               <div>
                 <p className="font-semibold">{t.header.welcome(user.email ?? "")}</p>
-                <p className="text-slate-400 text-xs">
-                  {t.header.credits(remainingCredits, isQuotaLoading)}
-                </p>
               </div>
               <button
                 onClick={logout}

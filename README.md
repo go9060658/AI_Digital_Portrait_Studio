@@ -1,10 +1,18 @@
 # AI Digital Portrait Studio
 
-**版本：v3.5** | [v3.0 穩定版（stablev3.0 分支）](https://github.com/mkhsu2002/AI_Digital_Portrait_Studio/tree/stablev3.0)
+**版本：v3.5**
 
 「電商人像攝影棚」是一套基於 React + Vite 的網頁應用，整合 Google Gemini 影像模型與 Firebase 服務，協助品牌快速生成多視角的人像商品圖。專案已開源，歡迎自行部署並依需求調整。
 
 英語說明（English Guide）：[README.en.md](./README.en.md)
+
+## 🌐 立即體驗 (Try it Now)
+
+免部署，點擊下方連結填入您自己的，已正確開啟付費及授權的 Gemini API Key，即可立即體驗：
+
+👉 **[https://portrait.icareu.tw/](https://portrait.icareu.tw/)**
+
+若希望自行部署，請參考下方 GitHub/Cloudflare Pages 的部署指南！
 
 ## 📋 版本資訊
 
@@ -18,18 +26,9 @@
 - ✅ **UI/UX 優化**：重新設計 API Key 設定彈出視窗，加入鍵盤快捷鍵支援（Ctrl+Enter / Cmd+Enter）
 - ✅ **圖片下載修復**：修復 Firebase Storage 圖片下載的 CORS 問題
 - ✅ **錯誤診斷改進**：改進 API Key 處理和錯誤診斷，確保格式正確
+- ✅ **移除使用額度限制**：使用者可使用自己的 API Key 無限制生成
 
 **詳細變更記錄**：請參考 [CHANGELOG_v3.5.md](./CHANGELOG_v3.5.md)
-
-### v3.0（穩定版）
-
-v3.0 是穩定版本，包含完整的核心功能：
-- 多視角影像生成
-- 動態影像延伸
-- 歷史紀錄與還原
-- Firebase 認證與儲存
-
-如需使用穩定版本，請切換到 `stablev3.0` 分支。
 
 ## 核心功能
 
@@ -427,13 +426,35 @@ firebase deploy --only hosting
 - [CHANGELOG_v3.5.md](./CHANGELOG_v3.5.md) - v3.5 版本改動總結
 - [MERGE_SUMMARY_v3.5.md](./MERGE_SUMMARY_v3.5.md) - v3.5 合併總結
 
-> 預設的 `main` 分支為每個帳號提供 100 次免費生成額度；若需要無限制使用，請改用 `unlimited_v3.0` 分支部署。
-
 > ⚠️ **安全提醒**：部署到公開平台時，API Key 會暴露在前端程式碼中。建議使用 Firebase Cloud Functions 作為 API 代理，詳見 [SECURITY.md](./SECURITY.md)。
 
+## 💬 技術支援與討論
+
+如有任何問題、建議或需要技術支援，歡迎加入 FlyPig 專屬 LINE 群組：
+
+👉 **[加入 FlyPig LINE 群組](https://line.me/R/ti/g/@icareuec)**
+
+我們會在這裡提供：
+- 技術支援與問題解答
+- 功能更新與使用教學
+- 社群討論與經驗分享
+- 最新功能預覽與測試
+
+## ☕ 請我喝杯咖啡
+
+如果這個專案對您有幫助，歡迎請我喝杯咖啡：
+
+👉 **[Buy me a coffee](https://buymeacoffee.com/mkhsu2002w)**
+
+您的支持是我持續開發的動力！
+
 若需協助委外部署或客製化選項開發（例如新增場景、人物姿態)，歡迎聯絡 FlyPig AI
-Email: flypig@icareu.tw  / LIND ID: icareuec
+Email: flypig@icareu.tw  / LINE ID: icareuec
 
 ## 授權條款
 
-本專案採用 **Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)** 授權。您可以自由使用、修改與自建部署，但不得將本專案提供之服務轉為收費性商業用途。詳見授權全文：<https://creativecommons.org/licenses/by-nc/4.0/>.
+本專案採用 **MIT 授權**。您可以自由使用、修改與自建部署。
+
+**Open sourced by [FlyPig AI](https://flypigai.icareu.tw/)**
+
+詳見授權全文：[LICENSE](./LICENSE)

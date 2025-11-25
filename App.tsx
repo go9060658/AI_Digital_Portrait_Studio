@@ -15,7 +15,6 @@ import { useFormData } from './hooks/useFormData';
 import { useImageGeneration } from './hooks/useImageGeneration';
 import { useVideoGeneration } from './hooks/useVideoGeneration';
 import { useHistory } from './hooks/useHistory';
-import { useQuota } from './hooks/useQuota';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { handleError, logError } from './utils/errorHandler';
 import FirebaseErrorDisplay from './components/FirebaseErrorDisplay';
@@ -46,7 +45,6 @@ const AppContent: React.FC = () => {
   const imageGeneration = useImageGeneration();
   const videoGeneration = useVideoGeneration();
   const history = useHistory();
-  const quota = useQuota();
 
   const [generatedPrompt, setGeneratedPrompt] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
@@ -114,23 +112,7 @@ const AppContent: React.FC = () => {
       return;
     }
 
-    if (quota.remainingCredits !== null && quota.remainingCredits <= 0) {
-      setError(t.errors.quotaExhausted);
-      return;
-    }
-
-    // 扣減使用次數
-    try {
-      await quota.consumeCredit();
-    } catch (consumeError) {
-      const appError = handleError(consumeError);
-      if (appError.type === 'QUOTA') {
-        setError(t.errors.quotaExhausted);
-      } else {
-        setError(t.errors.consumeFailed);
-      }
-      return;
-    }
+    // v3.5: 已移除使用額度限制，使用者可使用自己的 API Key 無限制生成
 
     try {
       // 生成圖片
@@ -241,7 +223,7 @@ const AppContent: React.FC = () => {
         />
       )}
       <div className="max-w-7xl mx-auto">
-        <Header remainingCredits={quota.remainingCredits} isQuotaLoading={quota.isLoading} />
+        <Header />
         <main className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           <div className="flex flex-col gap-8">
             <Suspense fallback={<ComponentLoader />}>
