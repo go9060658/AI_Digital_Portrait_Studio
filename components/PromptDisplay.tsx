@@ -70,10 +70,35 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
 
     if (error) {
       return (
-        <div className="flex items-center justify-center h-full text-red-400">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold">{t.promptDisplay.errorTitle}</h3>
-            <p className="mt-2 text-sm bg-red-900/50 p-3 rounded-md">{error}</p>
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center max-w-md">
+            <div className="mb-4">
+              <svg
+                className="w-16 h-16 text-red-500 mx-auto mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold text-red-400 mb-2">
+              {t.promptDisplay.errorTitle}
+            </h3>
+            <p className="text-sm text-slate-300 bg-red-900/30 border border-red-800/50 p-4 rounded-lg mb-4">
+              {error}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
+            >
+              重新載入頁面
+            </button>
           </div>
         </div>
       );
@@ -108,6 +133,8 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
                       src={image.src}
                       alt={`Generated image ${index + 1}`}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
                 </div>

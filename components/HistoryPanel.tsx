@@ -36,6 +36,8 @@ const HistoryPanel: React.FC<HistoryPanelProps> = React.memo(({ history, onResto
                       src={item.images[0]?.src ?? ""}
                       alt={item.formData.productName}
                       className="w-16 h-16 rounded-md object-cover flex-shrink-0 border border-slate-600"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div className="flex-grow overflow-hidden">
                       <p className="font-semibold text-slate-200 truncate">{item.formData.productName}</p>

@@ -17,6 +17,7 @@ import { useHistory } from './hooks/useHistory';
 import { useQuota } from './hooks/useQuota';
 import { handleError, logError } from './utils/errorHandler';
 import FirebaseErrorDisplay from './components/FirebaseErrorDisplay';
+import ErrorToast from './components/ErrorToast';
 import { firebaseDiagnostics } from './firebase';
 
 // 程式碼分割：延遲載入主要組件
@@ -46,9 +47,16 @@ const AppContent: React.FC = () => {
 
   const [generatedPrompt, setGeneratedPrompt] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
+  const [showErrorToast, setShowErrorToast] = useState(false);
 
   // 使用防抖動處理 prompt 生成，減少不必要的重新計算
   const debouncedFormData = useDebounce(formData, 500);
+
+  // 鍵盤快捷鍵支援
+  useKeyboardShortcuts({
+    'ctrl+enter': handleGenerate,
+    'meta+enter': handleGenerate,
+  });
 
   useEffect(() => {
     // 此詠唱僅用於顯示和複製。
@@ -62,9 +70,12 @@ const AppContent: React.FC = () => {
     try {
       await formDataHook.handleFileChange(e);
       setError(null);
+      setShowErrorToast(false);
     } catch (err) {
       const appError = handleError(err);
-      setError(appError.userMessage || appError.message);
+      const errorMessage = appError.userMessage || appError.message;
+      setError(errorMessage);
+      setShowErrorToast(true);
     }
   };
 
@@ -132,7 +143,9 @@ const AppContent: React.FC = () => {
     } catch (err) {
       const appError = handleError(err, t.errors.general);
       logError(appError, 'Generate Images');
-      setError(appError.userMessage || appError.message);
+      const errorMessage = appError.userMessage || appError.message;
+      setError(errorMessage);
+      setShowErrorToast(true);
     }
   };
 
@@ -191,6 +204,18 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="bg-slate-900 min-h-screen text-slate-100 font-sans p-4 sm:p-6 md:p-8">
+      {showErrorToast && error && (
+        <ErrorToast
+          message={error}
+          onClose={() => {
+            setShowErrorToast(false);
+            setError(null);
+          }}
+          onRetry={imageGeneration.isLoading ? undefined : handleGenerate}
+          autoClose={true}
+          autoCloseDelay={8000}
+        />
+      )}
       <div className="max-w-7xl mx-auto">
         <Header remainingCredits={quota.remainingCredits} isQuotaLoading={quota.isLoading} />
         <main className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">

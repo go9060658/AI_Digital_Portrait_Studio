@@ -78,6 +78,8 @@ const FileInput: React.FC<{
                 src={previewUrl}
                 alt={`${label} preview`}
                 className="w-full h-32 object-contain rounded"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           )}
