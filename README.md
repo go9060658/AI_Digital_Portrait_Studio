@@ -211,24 +211,38 @@
    - **Root directory**: `/`（留空也可以，預設就是根目錄）
    - **Node.js version**: 20（或更高）
 
-3. **設定環境變數**
+3. **設定環境變數** ⚠️ **重要：必須手動設定**
    
-   前往 **Settings** → **Environment Variables**，新增以下變數：
+   **Cloudflare Pages 不會自動填入環境變數**，您需要手動在 Cloudflare Dashboard 中設定。
    
-   **生產環境（Production）**：
+   **設定步驟**：
+   1. 前往 **Settings** → **Environment Variables**
+   2. 點擊 **Add variable**（新增變數）
+   3. 選擇 **Production**（生產環境）
+   4. 依序新增以下變數：
+   
+   **必要變數（Firebase）**：
    ```
-   VITE_API_KEY=你的_GEMINI_API_KEY（可選）
-   VITE_FIREBASE_API_KEY=你的_FIREBASE_API_KEY
-   VITE_FIREBASE_AUTH_DOMAIN=xxx.firebaseapp.com
-   VITE_FIREBASE_PROJECT_ID=你的_PROJECT_ID
-   VITE_FIREBASE_STORAGE_BUCKET=你的_STORAGE_BUCKET
-   VITE_FIREBASE_MESSAGING_SENDER_ID=你的_SENDER_ID
-   VITE_FIREBASE_APP_ID=你的_APP_ID
-   VITE_BASE_PATH=/
+   VITE_FIREBASE_API_KEY = 你的_FIREBASE_API_KEY
+   VITE_FIREBASE_AUTH_DOMAIN = xxx.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID = 你的_PROJECT_ID
+   VITE_FIREBASE_STORAGE_BUCKET = 你的_STORAGE_BUCKET
+   VITE_FIREBASE_MESSAGING_SENDER_ID = 你的_SENDER_ID
+   VITE_FIREBASE_APP_ID = 你的_APP_ID
    ```
    
-   **預覽環境（Preview）**（可選，用於 Pull Request 預覽）：
-   - 可以設定相同的環境變數，或使用不同的 Firebase 專案進行測試
+   **可選變數**：
+   ```
+   VITE_API_KEY = 你的_GEMINI_API_KEY（可選）
+   VITE_BASE_PATH = /（通常保持為 /）
+   ```
+   
+   **⚠️ 注意事項**：
+   - 變數名稱必須完全正確（必須以 `VITE_` 開頭）
+   - 變數值不要包含多餘的空格或引號
+   - 設定完成後需要重新部署才會生效
+   
+   **詳細設定步驟**請參考：[CLOUDFLARE_ENV_SETUP.md](./CLOUDFLARE_ENV_SETUP.md)
 
 4. **分支控制**
    - **生產分支**：`main`（或 `dev3.5`）
