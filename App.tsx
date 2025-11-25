@@ -52,12 +52,6 @@ const AppContent: React.FC = () => {
   // 使用防抖動處理 prompt 生成，減少不必要的重新計算
   const debouncedFormData = useDebounce(formData, 500);
 
-  // 鍵盤快捷鍵支援
-  useKeyboardShortcuts({
-    'ctrl+enter': handleGenerate,
-    'meta+enter': handleGenerate,
-  });
-
   useEffect(() => {
     // 此詠唱僅用於顯示和複製。
     // 實際的生成邏輯會為每個鏡頭使用獨立的詠唱。
@@ -85,6 +79,7 @@ const AppContent: React.FC = () => {
     }
 
     setError(null);
+    setShowErrorToast(false);
 
     // 驗證表單資料
     const formValidation = validateFormData(formData);
