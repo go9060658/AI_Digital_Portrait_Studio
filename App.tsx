@@ -13,7 +13,6 @@ import { validateFormData } from './utils/validation';
 import { useDebounce } from './hooks/useDebounce';
 import { useFormData } from './hooks/useFormData';
 import { useImageGeneration } from './hooks/useImageGeneration';
-import { useVideoGeneration } from './hooks/useVideoGeneration';
 import { useHistory } from './hooks/useHistory';
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import { handleError, logError } from './utils/errorHandler';
@@ -43,7 +42,6 @@ const AppContent: React.FC = () => {
   const formDataHook = useFormData();
   const { formData } = formDataHook;
   const imageGeneration = useImageGeneration();
-  const videoGeneration = useVideoGeneration();
   const history = useHistory();
 
   const [generatedPrompt, setGeneratedPrompt] = useState<string>('');
@@ -142,15 +140,6 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const handleGenerateVideo = async (index: number) => {
-    await videoGeneration.generateVideo(
-      index,
-      imageGeneration.images[index].src,
-      formData.aspectRatio,
-      imageGeneration.images,
-      imageGeneration.setImages
-    );
-  };
 
   const handleRestoreHistory = (item: typeof history.history[0]) => {
     const restored = history.restoreFormDataFromHistory(item.formData);
