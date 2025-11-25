@@ -80,7 +80,7 @@ const PromptDisplay: React.FC<PromptDisplayProps> = React.memo(({
     } finally {
       setDownloadingIndex(null);
     }
-  }, []);
+  }, [loadImageViaCanvas]);
 
   // 透過 Canvas 載入圖片（繞過 CORS）
   const loadImageViaCanvas = useCallback(async (imageSrc: string): Promise<Blob> => {
